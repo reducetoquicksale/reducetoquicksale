@@ -23,7 +23,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = '';
+if( ENVIRONMENT == "production" ) {
+	$host = $_SERVER['HTTP_HOST'];
+	$config['base_url']	= "http://$host/";
+	define("DOCUMENT_ROOT", "");
+} else {
+	$host = $_SERVER['HTTP_HOST'];
+	$config['base_url']	= "http://$host/reduce/";
+	define("DOCUMENT_ROOT", trim($_SERVER['DOCUMENT_ROOT'],"/")."/reduce/");
+}
 
 /*
 |--------------------------------------------------------------------------

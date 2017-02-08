@@ -22,10 +22,10 @@
 	$config['TPL_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
 
 	// FOLDER NAME IN WHICH THE TEMPLATES FILES ARE
-	$config['TPL_FOLDER'] = 'template';
+	$config['TPL_FOLDER'] = 'template-backend';
 
 	// FOLDER NAME IN WHICH THE VIEW FILES ARE
-	$config['TPL_VIEW_FOLDER'] = '';
+	$config['TPL_VIEW_FOLDER'] = 'backend';
 
 	/*
 	PATH OF CSS AND SCRIPT FILES TO BE LOADED

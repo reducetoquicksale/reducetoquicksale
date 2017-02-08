@@ -1,63 +1,58 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-	global $calledController, $calledFunction;
+	
+	//global $calledController, $calledFunction;
+
 	function getLoggedUser() {
 		$CI = &get_instance();
 		$CI->load->library("session");
-		$user = unserialize($CI->session->userdata(USER_SESSION_NAME));
+		$user = unserialize($CI->session->userdata(ProjectENUM::USER_SESSION_NAME));
 		return $user;
 	}
 
-	function validateUserLogin() {
+	function validateUserLogin($redirect = TRUE) {
 		$oUser = getLoggedUser();
-		if($oUser == null){
-			redirect(base_url()."login", "refresh");
-		} else {
-			if($oUser->is_super == 0 && getVariable("is_authenticated_enable", STATUS_DISABLE) == STATUS_ENABLE) {
-				$CI = & get_instance();//print getVariable("is_authenticated_enable", STATUS_DISABLE);die;
-				$CI->m_core->table = T_IP;
-				$CI->m_core->data_only = TRUE;
-				$CI->m_core->use_join = FALSE;
-				if($CI->m_core->listing(NULL,array("user_ref_id"=>$oUser->user_id))) {
-					$temp = $CI->m_core->class_data;
-					if($temp["status"] == STATUS_ENABLE && $temp["ip"] != $_SERVER["REMOTE_ADDR"]) {
-						set_message("Sorry! Your IP Address is not Autenticated", MESSAGE_TYPE_ERROR);
-						redirect(base_url("logout"));
-					}
-				}
+		if($oUser == null) { 
+			if($redirect == TRUE) { 
+				redirect(base_url()."login", "refresh"); 
+			} else {
+				return FALSE;
 			}
 		}
 	}
 
-	function validateUserAccess($controller, $function, $setGlobal = FALSE){
-		$controller = strtolower($controller);
-		$function = strtolower($function);
-		//validateUserAccess(__CLASS__, __FUNCTION__, TRUE);
+	function validateUserAccess($obj){
+		$action_id = UserAction::NONE;
+		if(!file_exists(DOCUMENT_ROOT."roles/actions.php")) { createActionFile(); }
+		include_once(DOCUMENT_ROOT."roles/actions.php");
+		global $ACTION;
+		if(isset($ACTION[$obj->router->class][$obj->router->method])) { 
+			$action_id = $ACTION[$obj->router->class][$obj->router->method];
+			return validateAction($action_id);
+		}
+	}
+
+	function validateAction($action_id) {
 		$flag = FALSE;
-		$oUser = getLoggedUser();	
-		if(NULL != $oUser && $oUser != "") {
-			if($oUser->user_role_id == 0 && $oUser->is_super == 1) {
+		$oUser = getLoggedUser();
+		$user_role_id = UserRole::ANNONYMOUS;
+		if(!empty($oUser)) {
+			if($oUser->is_super == 1) {
 				$flag = TRUE;
-			} else if($oUser->user_role_id != 0) {
-				if(!file_exists(DOCUMENT_ROOT."roles/role_".$oUser->user_role_id.".php")) {
-					createRoleFiles();
-				}
-				include_once(DOCUMENT_ROOT."roles/role_".$oUser->user_role_id.".php");
-				global $ACTION;
-				if(isset($ACTION[$controller][$function]) && $ACTION[$controller][$function] == TRUE) { $flag = TRUE; }
+				return $flag;
+			} else {
+				$user_role_id = $oUser->user_role_id;
 			}
 		}
-		if($setGlobal == TRUE) {
-			global $calledController, $calledFunction;
-			$calledController = $controller;
-			$calledFunction = $function;
-		}
+		if(!file_exists(DOCUMENT_ROOT."roles/role_".$user_role_id.".php")) { createRoleFiles(); }
+		include_once(DOCUMENT_ROOT."roles/role_".$user_role_id.".php");
+		global $ROLE_ACTION;		
+		foreach ($ROLE_ACTION as $role) { if(in_array($action_id, $role)) { $flag = TRUE; } }
 		return $flag;
 	}
 
 	function createRoleFiles($role_id = 0) {
 		$CI = & get_instance();
 		$CI->load->model('m_role');
-		$CI->load->model('m_user_ref_type');
 
 		$arrRoles = array();
 		if($role_id == 0) {
@@ -70,17 +65,15 @@
 		if(count($arrRoles) > 0) {
 			foreach($arrRoles as $role) {
 				$CI->m_role->role_id = $role["role_id"];
-				$roleActions = $CI->m_role->getRoleActions();				 
+				$roleActions = $CI->m_role->getRoleActions();			 
 				$file_content = array();
-				$file_content[] = "<?php \n global ".'$ACTION;'." \n";
+				$file_content[] = "<?php \n global ".'$ROLE_ACTION;'." \n".'$ROLE_ACTION'." = array(); \n";
 				if(count($arrActions) > 0) {					
 					foreach($arrActions as $action) {
 						$action["controller"] = strtolower($action["controller"]);
 						$action["function"] = strtolower($action["function"]);
 						if(isset($roleActions[$action["action_id"]])) {
-							$file_content[] = '$ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = TRUE;'."\n";
-						} else {
-							$file_content[] = '$ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = FALSE;'."\n";
+							$file_content[] = '$ROLE_ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = '.$action["action_id"].';'."\n";
 						}
 					}					
 				}
@@ -89,11 +82,29 @@
 				$file = implode(" ", $file_content);
 
 				$file_path = DOCUMENT_ROOT."roles"; 
-				if(!is_dir($file_path)){
-					mkdir($file_path,0755,TRUE);
-				}
-
+				if(!is_dir($file_path)) { mkdir($file_path,0755,TRUE); }
 				file_put_contents($file_path."/role_".$role["role_id"].".php", $file_content);
 			}
 		}
+	}
+
+	function createActionFile() {
+		$CI = & get_instance();
+		$CI->load->model('m_role');
+		$arrActions = $CI->m_role->getActions();
+		$file_content = array();
+		$file_content[] = "<?php \n global ".'$ACTION;'." \n";
+		if(count($arrActions) > 0) {			
+			foreach($arrActions as $action) {
+				$file_content[] = '$ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = '.$action["action_id"].';'."\n";
+			}					
+		}
+
+		$file_content[] = "?>";
+		$file = implode(" ", $file_content);
+
+		$file_path = DOCUMENT_ROOT."roles"; 
+		if(!is_dir($file_path)) { mkdir($file_path,0755,TRUE); }
+		file_put_contents($file_path."/actions.php", $file_content);
+			
 	}
