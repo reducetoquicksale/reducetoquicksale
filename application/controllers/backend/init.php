@@ -62,7 +62,7 @@ class Init extends MY_Controller {
 		$data["arrField"] = array("field_user_name" => $field_user_name, "field_password" => $field_password, "field_return_url" => $field_return_url);
 
 		$data['title'] = 'Login';
-		$this->template->add_js(array("assets/js/jquery.backstretch.min.js"));
+		$this->template->add_js(array("assets/backend/js/jquery.backstretch.min.js"));
 		$this->template->load('login', $data, TPLBackend::BLANK);
 	}
 
