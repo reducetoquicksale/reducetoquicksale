@@ -1,18 +1,24 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+abstract class TPLFile {
+	const BLANK = 'blank';
+	const MAIN = 'structure_main';
+	const TPRINT = 'structure_print';
+}
+
 class Template {
 	
 	private $title_prefix, $title_postfix, $template_file_folder, $template_view_folder, $css, $script, $html_head, $default_template_view, $compressed_folder; 
-	private $CI, $config_file_loaded = FALSE;
+	private $CI, $config_file, $is_config_loaded = FALSE;
 	var $returnHtml = FALSE;
 
 	function __construct(){
 		$this->CI =& get_instance();
-		//$this->load_config('template', true);
+		if(!empty($this->CI->config->item('default_template'))) { $this->load_config($this->CI->config->item('default_template'), true); }
 	}
 	
 	public function load($view, $data = NULL, $template = NULL){
-		if(!$this->config_file_loaded) { show_error('Template configration file not loaded'); }
+		if(!$this->is_config_loaded) { show_error('Template configration file not loaded'); }
 		
 		if(empty($template)){ $template = $this->default_template_view; }
 		
@@ -33,38 +39,35 @@ class Template {
     }
 	
 	public function load_config($config_file = '', $constructer_call = false){
-		
-		if ( file_exists( APPPATH.'config/'.$config_file ) ){
-			$config_file = $config_file;
-		} else if ( file_exists( APPPATH.'config/'.$config_file.'.php' ) ){
-			$config_file = $config_file.'.php';
-		} else {
-			if($constructer_call == true)
-				return;
-			else
-				show_error('Unable to load the config file: ' . 'config/'.$config_file.'.php');
-		}
-
-		if($this->CI->config->load($config_file)){
-			$this->config_file_loaded = TRUE;
+		if($this->CI->config->is_loaded($config_file)) { 
+			$this->is_config_loaded = TRUE;
+			$this->config_file = $config_file;
+		} elseif($this->CI->config->load($config_file, true)){ 
+			$this->is_config_loaded = TRUE;
+			$this->config_file = $config_file;
+			if(!empty($this->get_config_item('TPL_CONSTANT'))){ eval($this->get_config_item('TPL_CONSTANT')); }
 		} else {
 			show_error('Unable to load the config file: ' . 'config/'.$config_file.'.php');
 		}		
+
+        
+
+		$this->html_head = $this->get_config_item('TPL_HTML_HEAD');
+		$this->title_prefix = $this->get_config_item('TPL_TITLE_PREFIX');
+		$this->title_postfix = $this->get_config_item('TPL_TITLE_POSTFIX');
+		$this->template_file_folder = $this->get_config_item('TPL_FOLDER');
+		$this->template_view_folder = $this->get_config_item('TPL_VIEW_FOLDER');
+		$this->css = $this->get_config_item('TPL_CSS');
+		$this->script = $this->get_config_item('TPL_SCRIPT');
+		$this->default_template_view = $this->get_config_item("TPL_DEFAULT_VIEW");
+		$this->compressed_folder = $this->get_config_item('TPL_COMPRESSED_FOLDER');
+		$this->minify_css = $this->get_config_item('TPL_MINIFY_CSS');
+		$this->minify_script = $this->get_config_item('TPL_MINIFY_SCRIPT');
 		
-		//foreach($this->CI->config->item('TPL_CONSTANT') as $index => $value){ define($index, $value); }
-        if(!empty($this->CI->config->item('TPL_CONSTANT'))){ eval($this->CI->config->item('TPL_CONSTANT')); }
-		
-		$this->html_head = $this->CI->config->item('TPL_HTML_HEAD');
-		$this->title_prefix = $this->CI->config->item('TPL_TITLE_PREFIX');
-		$this->title_postfix = $this->CI->config->item('TPL_TITLE_POSTFIX');
-		$this->template_file_folder = $this->CI->config->item('TPL_FOLDER');
-		$this->template_view_folder = $this->CI->config->item('TPL_VIEW_FOLDER');
-		$this->css = $this->CI->config->item('TPL_CSS');
-		$this->script = $this->CI->config->item('TPL_SCRIPT');
-		$this->default_template_view = $this->CI->config->item("TPL_DEFAULT_VIEW");
-		$this->compressed_folder = $this->CI->config->item('TPL_COMPRESSED_FOLDER');
-		$this->minify_css = $this->CI->config->item('TPL_MINIFY_CSS');
-		$this->minify_script = $this->CI->config->item('TPL_MINIFY_SCRIPT');
+	}
+
+	function get_config_item($item) {
+		return $this->CI->config->item($item, $this->config_file);
 	}
 	
 	private function init($view, $data, $template){
@@ -293,7 +296,7 @@ class Template {
 	}
 
 	function ajax_view($view, $data, $template = NULL){
-		if(!$this->config_file_loaded) { show_error('Template configration file not loaded'); }
+		if(!$this->is_config_loaded) { show_error('Template configration file not loaded'); }
 		
 		if(empty($template)) { $template = $this->default_template_view; }		
 		if(empty($data)) { $data = NULL; }

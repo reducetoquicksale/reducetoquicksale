@@ -103,7 +103,7 @@ $autoload['helper'] = array('url', "session", "util", "form");
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array("template-backend");
+$autoload['config'] = array();
 
 /*
 | -------------------------------------------------------------------

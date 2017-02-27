@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 	
-	function set_message($msg, $type = MESSAGE_TYPE_ERROR) {
+	function set_message($msg, $type = MessageType::ERROR) {
 		$CI = &get_instance();
 		$messages = array();
 		if(!is_array($msg))
@@ -42,7 +42,7 @@
 				$arrInformation = array();
 				foreach($messages as $msg) {
 					switch($msg['type']) {
-						case MESSAGE_TYPE_ERROR:
+						case MessageType::ERROR:
 							$arrError[] = $msg['message'];
 							break;
 						case MESSAGE_TYPE_WARNING:

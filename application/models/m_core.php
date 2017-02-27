@@ -1,23 +1,23 @@
 <?php
-class M_Core
+class M_Core extends CI_Model 
 {	
-    private $CI;
-    var $insert_id, $result, $message, $sql;
-
+	public $CI;
+    var $insert_id, $result, $message, $sql, $error_code, $error_message;
 
     function __construct(){
-        $this->CI = new CI_Model();
-
+		$this->CI = &get_instance();
         $this->insert_id = 0;
         $this->result = NULL;
         $this->message = "";
 		$this->sql = NULL;
+		$this->error_code = 0;
+		$this->error_message = "";
 	}
 
 	function insert($table_name, array $data){
 		if(is_array($data)){
-			if($this->CI->db->insert($table_name, $data)){
-				$this->insert_id = $this->CI->db->insert_id();
+			if($this->db->insert($table_name, $data)){
+				$this->insert_id = $this->db->insert_id();
 				$this->message = "".$table_name." added";
 				return true;
 			} else{
@@ -32,9 +32,9 @@ class M_Core
 
 	function update($table_name, array $data, $where = ''){
 		if(is_array($data)){
-			$this->CI->db->set($data);
-			if($where != null) { $this->CI->db->where($where); }
-            if($this->CI->db->update($table_name)){
+			$this->db->set($data);
+			if($where != null) { $this->db->where($where); }
+            if($this->db->update($table_name)){
                 $this->message = "".$table_name." Updated";
                 return true;
             } else {
@@ -48,8 +48,8 @@ class M_Core
     }
 
     function delete($table_name, $where = null) {
-        if($where != null) { $this->CI->db->where($where); }
-        if($this->CI->db->update($table_name)){
+        if($where != null) { $this->db->where($where); }
+        if($this->db->update($table_name)){
             $this->message = "".$table_name." deleted";
             return true;
         } else {
@@ -59,7 +59,7 @@ class M_Core
     }
 
     function execute(string $sql){
-        if($this->CI->db->query($sql)){
+        if($this->db->query($sql)){
             $this->message = "Query Executed Successfully";
             return true;
         } else {
@@ -70,9 +70,9 @@ class M_Core
 
 	function getAll($table_name, array $where = NULL) {
         if(empty($where)) {
-			 $query = $query = $this->CI->db->get($table_name);
+			 $query = $query = $this->db->get($table_name);
 		} else {
-			$query = $query = $this->CI->db->get_where($table_name, $where);
+			$query = $query = $this->db->get_where($table_name, $where);
 		}
 
         if($query->num_rows() > 0){
@@ -85,7 +85,7 @@ class M_Core
     }
 
     function get(string $sql) {
-        $query = $this->CI->db->query($sql);
+        $query = $this->db->query($sql);
         if($query->num_rows() > 0){
             $this->result = $query->result_array();
             return true;
@@ -96,9 +96,9 @@ class M_Core
     }
 
     function get_single_row($sql) {
-        $query = $this->CI->db->query($sql);
+        $query = $this->db->query($sql);
         if($query->num_rows() > 0) {
-            $this->class_data = $query->row_array();
+            $this->result = (object)$query->row_array();
             return true;
         } else{
             $this->message = "Sorry! No Record Found";

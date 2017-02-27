@@ -57,6 +57,10 @@ $route['translate_uri_dashes'] = FALSE;
 $route['login'] = "init/login";
 $route['logout'] = "init/logout";
 
+$route['backend/login'] = "backend/init/login";
+$route['backend/logout'] = "backend/init/logout";
+$route['backend/dashboard'] = "backend/dashboard/index";
+
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

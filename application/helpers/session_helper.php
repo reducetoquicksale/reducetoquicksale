@@ -9,43 +9,48 @@
 		return $user;
 	}
 
-	function validateUserLogin($redirect = TRUE) {
+	function validateUserLogin($redirect) {
 		$oUser = getLoggedUser();
 		if($oUser == null) { 
 			if($redirect == TRUE) { 
-				redirect(base_url()."login", "refresh"); 
+				redirect($redirect, "refresh"); 
 			} else {
 				return FALSE;
 			}
 		}
 	}
 
-	function validateUserAccess($obj){
+	function validateUserAccess($obj, $show_access_denied = false){
 		$action_id = UserAction::NONE;
 		if(!file_exists(DOCUMENT_ROOT."roles/actions.php")) { createActionFile(); }
 		include_once(DOCUMENT_ROOT."roles/actions.php");
 		global $ACTION;
 		if(isset($ACTION[$obj->router->class][$obj->router->method])) { 
 			$action_id = $ACTION[$obj->router->class][$obj->router->method];
-			return validateAction($action_id);
+			$flag = validateAction($action_id);
+			if($flag == false && $show_access_denied) {
+				show_error("Access Denied.");
+			} else {
+				return $flag;
+			}
 		}
 	}
 
 	function validateAction($action_id) {
 		$flag = FALSE;
 		$oUser = getLoggedUser();
-		$user_role_id = UserRole::ANNONYMOUS;
+		//$user_role_id = UserRole::ANNONYMOUS;
 		if(!empty($oUser)) {
 			if($oUser->is_super == 1) {
 				$flag = TRUE;
 				return $flag;
 			} else {
-				$user_role_id = $oUser->user_role_id;
+				$user_role_id = $oUser->role_id;
 			}
 		}
 		if(!file_exists(DOCUMENT_ROOT."roles/role_".$user_role_id.".php")) { createRoleFiles(); }
 		include_once(DOCUMENT_ROOT."roles/role_".$user_role_id.".php");
-		global $ROLE_ACTION;		
+		global $ROLE_ACTION;
 		foreach ($ROLE_ACTION as $role) { if(in_array($action_id, $role)) { $flag = TRUE; } }
 		return $flag;
 	}

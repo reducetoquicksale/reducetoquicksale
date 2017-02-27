@@ -2,10 +2,8 @@
 
 	// TEMPLATE STRUCTURE CONSTANT ARRAY
 	//$config['TPL_CONSTANT'] = array('TPL_BLANK' => 'blank', 'TPL_MAIN' => 'structure_main', 'TPL_PRINT' => 'structure_print');
-    $config['TPL_CONSTANT']  = "abstract class TPLFile {
-		const BLANK = 'blank';
-		const MAIN = 'structure_main';
-		const TPRINT = 'structure_print';
+    $config['TPL_CONSTANT']  = "abstract class TPLBackend extends TPLFile {
+		const BLANK1 = 'blank';
 	}";
 
 
@@ -32,8 +30,8 @@
 	IF MORE THAN ONE FILES ARE TO BE INCLUDED THEN USE THEM IN ARRAY
 	IF SINGLE FILE IS TO BE INCLUDED USE IS AS STRING
 	*/
-	$config['TPL_CSS'] = array("assets/css/style.css", "assets/css/bootstrap.css", "assets/font-awesome/css/font-awesome.css", "assets/css/style-responsive.css");
-	$config['TPL_SCRIPT'] = array("assets/js/jquery.js", "assets/js/bootstrap.min.js");
+	$config['TPL_CSS'] = array("assets/backend/css/style.css", "assets/backend/css/bootstrap.css", "assets/backend/font-awesome/css/font-awesome.css", "assets/backend/css/style-responsive.css");
+	$config['TPL_SCRIPT'] = array("assets/backend/js/jquery.js", "assets/backend/js/bootstrap.min.js");
 
 	// DEFAULT VIEW TYPE TO BE LOADED IF NO VIEW TYPE IS PASSED DURING CALL
     // NEED TO USER DIRECT VIEW FILE NAME HERE - ENUM NOT SUPPORTED AT THIS TIME

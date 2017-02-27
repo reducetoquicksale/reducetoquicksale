@@ -1,13 +1,14 @@
 <?php if($section == "script") { ?>
-	$.backstretch("<?php echo base_url("assets/img/login-bg.jpg"); ?>", {speed: 500});
+	$.backstretch("<?php echo base_url("assets/backend/img/login-bg.jpg"); ?>", {speed: 500});
 <?php } if($section == "body") { ?>		
 	<div id="login-page">
 	  	<div class="container">	  	
 		      <form class="form-login" action="" method="post">
 		        <h2 class="form-login-heading">sign in now</h2>
-		        <div class="login-wrap">
+		        <?php get_message(); ?>
+				<div class="login-wrap">
 		            <!-- <input type="text" class="form-control" placeholder="User ID" autofocus> -->
-					<?php rander_field($arrField["field_user_id"]); ?>
+					<?php rander_field($arrField["field_user_name"]); ?>
 		            <br>
 		            <!-- <input type="password" class="form-control" placeholder="Password"> -->
 					<?php rander_field($arrField["field_password"]); ?>

@@ -2,54 +2,51 @@
 
 class Init extends MY_Controller {
 
-	public function Init() {
-		parent::__construct();
+	public function Init() {		
+		parent::InitBackend();
 		$this->load->model('m_user');
 	}
 
 	public function login() {
-		//print validateUserAccess($this);die;
-		
-		if(getLoggedUser() != "") {	redirect(base_url()."dashboard", "refresh"); }
 		$this->load->library('user_agent');			
 		$return_url = $this->agent->is_referral() ? $this->agent->referrer() : "";
 		if($return_url == "" && isset($_GET["return_url"]) ) { $return_url = $_GET["return_url"]; }
 		if(!preg_match("/^".str_replace("/","\/",base_url())."/", $return_url)) { $return_url = ""; }
 
-		$user_id = "";
+		$user_name = "";
 		$password = "";	
 
 		if($_POST != null) {
-			$user_id = $_POST["user_id"];
+			$user_name = $_POST["user_name"];
 			$password = $_POST["password"];
 			$return_url  = $_POST["return_url"];
 
-			$this->form_validation->set_rules('user_id', 'Login Id', 'required');
+			$this->form_validation->set_rules('user_name', 'Login Id', 'required');
 			$this->form_validation->set_rules('password', 'Password', 'required');
 			
 			if($this->form_validation->run() == true){ 				
-				$this->m_user->user_id = $user_id;
+				$this->m_user->user_name = $user_name;
 				$this->m_user->password = $password;
 				$userDetail = $this->m_user->authenticate();
 				if($userDetail != null) {	
-					$this->session->set_userdata(USER_SESSION_NAME, serialize($userDetail));					
+					$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, serialize($userDetail));					
 					if($return_url != "")
 						redirect($return_url);
 					else
-						redirect("dashboard");
+						redirect(URL::BACKEND . "/dashboard");
 				} else {
-					set_message($this->m_user->error_message, MESSAGE_TYPE_ERROR);
+					set_message($this->m_user->error_message, MessageType::ERROR);
 				}
 			} else {
-				set_message(validation_errors(), MESSAGE_TYPE_ERROR);
+				set_message(validation_errors(), MessageType::ERROR);
 			}
 		}
 		
-		$field_user_id = new form_field;
-		$field_user_id->type = FieldType::TEXT;
-		$field_user_id->name = "user_id";
-		$field_user_id->value = $user_id;
-		$field_user_id->attributes = array("id" => "field_user_id", "class" => "form-control", "placeholder" => "User ID");
+		$field_user_name = new form_field;
+		$field_user_name->type = FieldType::TEXT;
+		$field_user_name->name = "user_name";
+		$field_user_name->value = $user_name;
+		$field_user_name->attributes = array("id" => "field_user_name", "class" => "form-control", "placeholder" => "User ID");
 
 		$field_password = new form_field;
 		$field_password->type = FieldType::PASSWORD;
@@ -62,16 +59,16 @@ class Init extends MY_Controller {
 		$field_return_url->name = "return_url";
 		$field_return_url->value = $return_url;
 
-		$data["arrField"] = array("field_user_id" => $field_user_id, "field_password" => $field_password, "field_return_url" => $field_return_url);
+		$data["arrField"] = array("field_user_name" => $field_user_name, "field_password" => $field_password, "field_return_url" => $field_return_url);
 
 		$data['title'] = 'Login';
 		$this->template->add_js(array("assets/js/jquery.backstretch.min.js"));
-		$this->template->load('login', $data, TPLFile::BLANK);
+		$this->template->load('login', $data, TPLBackend::BLANK);
 	}
 
 	public function logout() {
 		$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, "");
-		redirect('login');
+		redirect(URL::BACKEND . '/login');
 	}
 
 	public function help() {

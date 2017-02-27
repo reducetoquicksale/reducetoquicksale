@@ -4,11 +4,11 @@ class MY_Controller extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
-		if(strtolower($this->uri->segment(1)) == URL::BACKEND) {
-			$this->template->load_config('template-backend');
-		} else {
-			$this->template->load_config('template');
-		}
+	}
+
+	public function InitBackend() { 
+		self::__construct();
+		$this->template->load_config('template-backend');
 	}
 }
 

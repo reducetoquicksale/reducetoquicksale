@@ -1,5 +1,5 @@
 <?php if($section == "script") { ?>
-	$.backstretch("assets/img/login-bg.jpg", {speed: 500});
+	$.backstretch("<?php echo base_url("assets/backend/img/login-bg.jpg"); ?>", {speed: 500});
 <?php } if($section == "body") { ?>		
 	<div id="login-page">
 	  	<div class="container">	  	
