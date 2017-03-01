@@ -3,10 +3,10 @@
 class Init extends MY_Controller {
 
 	public function Init() {		
-		parent::InitBackend();
+		parent::InitBackendLogin();
 		$this->load->model('m_user');
 	}
-
+	
 	public function login() {
 		$this->load->library('user_agent');			
 		$return_url = $this->agent->is_referral() ? $this->agent->referrer() : "";
@@ -26,7 +26,7 @@ class Init extends MY_Controller {
 			
 			if($this->form_validation->run() == true){ 				
 				$this->m_user->user_name = $user_name;
-				$this->m_user->password = $password;
+				echo $this->m_user->password = $password;
 				$userDetail = $this->m_user->authenticate();
 				if($userDetail != null) {	
 					$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, serialize($userDetail));					
@@ -37,9 +37,12 @@ class Init extends MY_Controller {
 				} else {
 					set_message($this->m_user->error_message, MessageType::ERROR);
 				}
-			} else {
-				set_message(validation_errors(), MessageType::ERROR);
+			} 
+			/*
+			else {
+				//set_message(validation_errors(), MessageType::ERROR);
 			}
+			*/
 		}
 		
 		$field_user_name = new form_field;
@@ -47,7 +50,7 @@ class Init extends MY_Controller {
 		$field_user_name->name = "user_name";
 		$field_user_name->value = $user_name;
 		$field_user_name->attributes = array("id" => "field_user_name", "class" => "form-control", "placeholder" => "User ID");
-
+		
 		$field_password = new form_field;
 		$field_password->type = FieldType::PASSWORD;
 		$field_password->name = "password";

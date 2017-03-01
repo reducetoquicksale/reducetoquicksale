@@ -13,7 +13,12 @@
 	$config['TPL_HTML_HEAD'] .= "\n".'<head>';
 	$config['TPL_HTML_HEAD'] .= "\n".'<meta charset="utf-8">';
 	$config['TPL_HTML_HEAD'] .= "\n".'<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"></meta>';
-	$config['TPL_HTML_HEAD'] .= "\n".'<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">';
+	$config['TPL_HTML_HEAD'] .= "\n".'<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+';
 
 	// TEMPLATE TITLE CONSTANTS
 	$config['TPL_TITLE_PREFIX'] = '';
@@ -30,8 +35,17 @@
 	IF MORE THAN ONE FILES ARE TO BE INCLUDED THEN USE THEM IN ARRAY
 	IF SINGLE FILE IS TO BE INCLUDED USE IS AS STRING
 	*/
-	$config['TPL_CSS'] = array("assets/backend/css/style.css", "assets/backend/css/bootstrap.css", "assets/backend/font-awesome/css/font-awesome.css", "assets/backend/css/style-responsive.css");
-	$config['TPL_SCRIPT'] = array("assets/backend/js/jquery.js", "assets/backend/js/bootstrap.min.js");
+	$config['TPL_CSS'] = array( 
+						"assets/backend/css/bootstrap.css", 
+						"assets/backend/font-awesome/css/font-awesome.css", 
+						"assets/backend/css/style.css",
+						"assets/backend/css/style-responsive.css"
+	);
+	$config['TPL_SCRIPT'] = array(
+						"assets/backend/js/jquery.js",
+						'assets/backend/js/jquery-1.8.3.min.js',
+						"assets/backend/js/bootstrap.min.js"
+	);
 
 	// DEFAULT VIEW TYPE TO BE LOADED IF NO VIEW TYPE IS PASSED DURING CALL
     // NEED TO USER DIRECT VIEW FILE NAME HERE - ENUM NOT SUPPORTED AT THIS TIME
@@ -39,7 +53,7 @@
 
 	// MINIFY THE AND COMPRESS THE CSS AND SCRIPT FILES
 	$config['TPL_MINIFY_CSS'] = FALSE;
-	$config['TPL_MINIFY_SCRIPT'] = TRUE;
+	$config['TPL_MINIFY_SCRIPT'] = FALSE;
 	$config['TPL_COMPRESSED_FOLDER'] = 'compressed';
 
 ?>

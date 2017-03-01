@@ -30,8 +30,10 @@ class form_field {
 function rander_field(form_field $field) {
 	if($field->type == FieldType::PASSWORD) {
 		echo form_password($field->name, $field->value, $field->attributes); 
+		//echo getMessageTypeHtml(form_error($field->name), 'error', '');
 	} elseif($field->type == FieldType::TEXT) {
-		echo form_input($field->name, $field->value, $field->attributes); 
+		echo form_input($field->name, $field->value, $field->attributes);
+		//echo getMessageTypeHtml(form_error($field->name), 'error', '');
 	}  elseif($field->type == FieldType::HIDDEN) {
 		echo form_hidden($field->name, $field->value, $field->attributes); 
 	}
