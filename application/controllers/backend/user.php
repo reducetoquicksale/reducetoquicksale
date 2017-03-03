@@ -17,6 +17,7 @@ class User extends MY_Controller {
 	public function add() {
 		validateUserAccess($this, true);
 		
+		/*
 		$this->load->library('form');
 		
 		$this->form->config(array(
@@ -40,7 +41,7 @@ class User extends MY_Controller {
 		echo $this->form->renderElement("user_name2");
 		
 		exit();
-		
+		*/
 		$user_name = "";
 		$password = "";	
 		$email = "";
@@ -74,5 +75,21 @@ class User extends MY_Controller {
 		$data['title'] = 'Add User';
 		$data['module'] = 'user';
 		$this->template->load('user/add_user', $data);
+	}
+
+	public function manage() {
+		validateUserAccess($this, true);
+		
+		$data['title'] = 'Manage Users';
+		$data['module'] = 'user';
+		$this->template->load('user/manage_user', $data);
+	}
+
+	public function view() {
+		validateUserAccess($this, true);
+		
+		$data['title'] = 'User Detail';
+		$data['module'] = 'user';
+		$this->template->load('user/view_user', $data);
 	}
 }
