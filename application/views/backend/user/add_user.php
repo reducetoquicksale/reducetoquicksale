@@ -42,19 +42,13 @@
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label">Name</label>
                               <div class="col-sm-10">
-                                  <?php rander_field($arrField["field_user_name"]); ?>
+                                  <input type="text" class="form-control" name="user_name" value="<?php echo set_value('user_name'); ?>">
                               </div>
                           </div>
                           <div class="form-group">
-                              <label class="col-sm-2 col-sm-2 control-label">Name</label>
+                              <label class="col-sm-2 col-sm-2 control-label">Email</label>
                               <div class="col-sm-10">
-                                  <?php rander_field($arrField["field_password"]); ?>
-                              </div>
-                          </div>
-                          <div class="form-group">
-                              <label class="col-sm-2 col-sm-2 control-label">User ID</label>
-                              <div class="col-sm-10">
-                                  <input type="text" class="form-control" name="user_loginid" value="<?php echo set_value('user_loginid'); ?>">
+                                  <input type="text" class="form-control" name="email" value="<?php echo set_value('email'); ?>">
                               </div>
                           </div>
                           <div class="form-group">

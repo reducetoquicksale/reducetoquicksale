@@ -1,8 +1,4 @@
-<section id="main-content">
-          <section class="wrapper">
-          	<h3><i class="fa fa-user"></i> View User Detail</h3>
-            
-            <!-- Modal -->
+<!-- Modal -->
 						<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-dialog">
 						    <div class="modal-content">
@@ -11,17 +7,18 @@
 						        <h4 class="modal-title" id="myModalLabel">Delete User</h4>
 						      </div>
 						      <div class="modal-body">
-						        Are you sure you want to delete <strong>'<?php echo $user_data->user_name ?>'</strong>?
+						        Are you sure you want to delete <strong>'Admin User Name'</strong>?
 						      </div>
 						      <div class="modal-footer">
 						        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						        <a type="button" class="btn btn-primary btn-danger" href="<?php echo base_url('user/delete/'.$user_data->user_id); ?>">Confirm Delete</a>
+						        <a type="button" class="btn btn-primary btn-danger" href="#">Confirm Delete</a>
 						      </div>
 						    </div>
 						  </div>
-						</div>   
+						</div>  
+<!-- Modal Ends --> 
                         
-                        
+<!-- Reset Password Modal -->   
 						<div class="modal fade" id="suspendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-dialog">
 						    <div class="modal-content">
@@ -42,8 +39,10 @@
 						    </div>
 						  </div>
 						</div> 
-          	
+<!-- Modal Ends -->
+            
           	<!-- BASIC FORM ELELEMNTS -->
+          	<h3><i class="fa fa-user"></i> View User Detail</h3>
           	<div class="row mt">
           		<div class="col-lg-12">
                   <div class="form-panel">
@@ -71,26 +70,22 @@
                               <label class="col-sm-2 col-sm-2 control-label">Name</label>
                               <div class="col-sm-10">
                                   <p class="form-control-static">
-								  <?php echo $user_data->user_name ?>
-                                  <?php if($user_data->user_status == 0){ ?>
+								  Administrator Name
                                   	<span class="label label-warning label-mini">In-Active</span>
-                                  <?php } else{ ?>
                                   	<span class="label label-success label-mini">Active</span>
-                                  <?php } ?>
                                   </p>
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label">User Type</label>
                               <div class="col-sm-10">
-                                  <p class="form-control-static"><?php echo userType($user_data->user_type); ?>
-                                  </p>
+                                  <p class="form-control-static">Admin</p>
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label">User ID</label>
                               <div class="col-sm-10">
-                                  <p class="form-control-static"><?php echo $user_data->user_loginid ?></p>
+                                  <p class="form-control-static">admin_user</p>
                               </div>
                           </div>
                           <div class="form-group">
@@ -105,5 +100,3 @@
                   </div>
           		</div><!-- col-lg-12-->      	
           	</div><!-- /row -->
-		</section><! --/wrapper -->
-      </section>

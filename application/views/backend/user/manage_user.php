@@ -16,9 +16,8 @@
 						    </div>
 						  </div>
 						</div>  
+<!-- Modal Ends -->
 
-<section id="main-content">
-          <section class="wrapper">
           	<h3><i class="fa fa-user"></i> Users List
             <form method="get" action="" class="pull-right">
             <ul class="nav pull-right top-menu">
@@ -58,41 +57,31 @@
                               </tr>
                               </thead>
                               <tbody>
-                              <?php foreach($user_list->result() as $row){ ?>
                               <tr>
                                   <td>
-                                  <?php if($row->user_status == 0){ ?>
                                   	<span class="label label-warning label-mini">In-Active</span>
-                                  <?php } else{ ?>
                                   	<span class="label label-success label-mini">Active</span>
-                                  <?php } ?>
                                   </td>
-                                  <td id="name<?php echo $row->user_id; ?>"><a href="<?php echo base_url('user/view/'.$row->user_id); ?>"><?php if($row->user_type == 2) echo $row->mem_name; else echo $row->user_name ?></a></td>
-                                  <td><?php echo userType($row->user_type); ?></td>
-                                  <td><?php echo $row->user_loginid; ?></td>
+                                  <td><a href="<?php echo base_url('backend/user/view'); ?>">User Name</a></td>
+                                  <td>Admin</td>
+                                  <td>admin</td>
                                   <td>
-                                  <?php if($row->user_status == 0){ ?>
-                                      <a class="btn btn-success btn-xs" href="<?php echo base_url('user/status/'.$row->user_id.'/1'); ?>" title="Set Active"><i class="fa fa-check"></i></a>
-                                  <?php } else{ ?>
-                                      <a class="btn btn-danger btn-xs" href="<?php echo base_url('user/status/'.$row->user_id.'/0'); ?>" title="Set Inactive"><i class="fa fa-ban"></i></a>
-                                  <?php } ?>
-                                      <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id="<?php echo $row->user_id; ?>"><i class="fa fa-trash-o "></i></button>
+                                      <a class="btn btn-success btn-xs" href="#" title="Set Active"><i class="fa fa-check"></i></a>
+                                      <a class="btn btn-danger btn-xs" href="#" title="Set Inactive"><i class="fa fa-ban"></i></a>
+                                      <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id=""><i class="fa fa-trash-o "></i></button>
                                   </td>
                               </tr>
-                              <?php } ?>
                               </tbody>
                           </table>
                           <div align="center">
                           <div class="btn-group">
-                          <?php echo $this->pagination->create_links(); ?>
+                          <?php //echo $this->pagination->create_links(); ?>
                           </div>
                           </div>
                       </div><!-- /content-panel -->
                   </div><!-- /col-md-12 -->
               </div><!-- /row -->
 
-		</section><! --/wrapper -->
-      </section>
 
 <script>
 $(document).ready(function(e) {
