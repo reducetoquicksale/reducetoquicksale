@@ -49,12 +49,31 @@
                               <label class="col-sm-2 col-sm-2 control-label">Email</label>
                               <div class="col-sm-10">
                                   <input type="text" class="form-control" name="email" value="<?php echo set_value('email'); ?>">
+                                  <span class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</span>
                               </div>
                           </div>
                           <div class="form-group">
                               <label class="col-sm-2 col-sm-2 control-label">Password</label>
                               <div class="col-sm-10">
                                   <input type="password" class="form-control" name="user_pass" value="<?php echo set_value('user_pass'); ?>">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Disabled</label>
+                              <div class="col-sm-10">
+                                  <input class="form-control" id="disabledInput" type="text" placeholder="Disabled input here..." disabled>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Select Box</label>
+                              <div class="col-sm-10">
+                                  <select class="form-control">
+						  			<option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                  </select>
                               </div>
                           </div>
                           <div class="form-group">
