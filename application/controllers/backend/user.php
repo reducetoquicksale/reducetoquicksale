@@ -4,7 +4,6 @@ class User extends MY_Controller {
 
 	public function User() {
 		parent::InitBackendSite();
-		validateUserLogin(URL::BACKEND . "/login");	
 	}
 
 	public function index() {
@@ -37,10 +36,10 @@ class User extends MY_Controller {
 		$field->label = "Name";
 		$this->form->addElement($field);
 		
-		echo $this->form->renderElement("user_name1");
-		echo $this->form->renderElement("user_name2");
+		//echo $this->form->renderElement("user_name1");
+		//echo $this->form->renderElement("user_name2");
 		
-		exit();
+		///exit();
 		*/
 		$user_name = "";
 		$password = "";	

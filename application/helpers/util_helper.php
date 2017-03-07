@@ -19,9 +19,13 @@
 		$CI->session->set_userdata('err_msg', serialize($messages));
 	}
 
-	function getMessageTypeHtml($arrMessage, $msgClassName, $appendAfterThisHtml) {
+	function getMessageTypeHtml($message, $msgClassName, $appendAfterThisHtml = "") {
 		$appendAfterThisHtml .= "<div class='".$msgClassName."'>";
-		foreach($arrMessage as $msg) { $appendAfterThisHtml .= '<div>'.$msg.'</div>'; }
+		if(is_array($message)) {
+			foreach($message as $msg) { $appendAfterThisHtml .= '<div>'.$msg.'</div>'; }
+		} else {
+			$appendAfterThisHtml .= '<div>'.$message.'</div>';
+		}
 		$appendAfterThisHtml .= "</div>";
 		return $appendAfterThisHtml;
 	}
@@ -57,13 +61,13 @@
 					}
 				}
 				if(count($arrError)>0)
-					$formattedMessages = getMessageTypeHtml($arrError, 'error', $formattedMessages);
+					$formattedMessages = getMessageTypeHtml($arrError, MessageType::ERROR, $formattedMessages);
 				if(count($arrWarning)>0)
-					$formattedMessages = getMessageTypeHtml($arrWarning, 'warning', $formattedMessages);			
+					$formattedMessages = getMessageTypeHtml($arrWarning, MessageType::WARNING, $formattedMessages);			
 				if(count($arrSuccess)>0)
-					$formattedMessages = getMessageTypeHtml($arrSuccess, 'success', $formattedMessages);				
+					$formattedMessages = getMessageTypeHtml($arrSuccess, MessageType::SUCCESS, $formattedMessages);				
 				if(count($arrInformation)>0)
-					$formattedMessages = getMessageTypeHtml($arrInformation, 'information', $formattedMessages);	
+					$formattedMessages = getMessageTypeHtml($arrInformation, MessageType::INFO, $formattedMessages);	
 				$result = true;
 			}
 		}
@@ -237,4 +241,50 @@
 			$return_url = urldecode($_POST["return_url"]);
 		}
 		return $return_url;
+	}
+
+	function currentUrl() {
+		return base_url(uri_string());
+	}
+
+	function arrayToClassObj($classObj, Array $array) {
+		$class_vars = get_class_vars(get_class($classObj));
+		foreach ($class_vars as $name => $value) {
+			$classObj->$name = $array[$name];
+		}
+		return $classObj;
+	}
+
+	function objectToClassArray($classObj, Object $array) {
+		$class_vars = get_class_vars(get_class($classObj));
+		foreach ($class_vars as $name => $value) {
+			$classObj[$name] = $array->$name;
+		}
+		return $classObj;
+	}
+
+	function arrayToObject($data)	{
+		if (is_array($data) || is_object($data)) {
+			$result = array();
+			foreach ($data as $key => $value) {
+				$result->$key = arrayToObject($value);
+			}
+			return $result;
+		}
+		return $data;
+	}
+
+	function objectToArray($data)	{
+		if (is_array($data) || is_object($data)) {
+			$result = array();
+			foreach ($data as $key => $value) {
+				$result[$key] = objectToArray($value);
+			}
+			return $result;
+		}
+		return $data;
+	}
+
+	function backendUrl($url) {
+		return base_url(URL::BACKEND ."/". $url);
 	}

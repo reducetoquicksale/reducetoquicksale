@@ -34,24 +34,13 @@ abstract class ProjectENUM {
     const CURRENCY_SIGN = "$";
 }
 
-/**************** Database Tables ENUMS******************************/
-
-abstract class DB_Table {
-	const ACTION = "action";
-	const ROLE = "role";
-	const ROLE_ACTION = "role_action_mapping";
-    const BUSINESS = "business";
-    const USER = "user";
-    const ADDRESS = "address";
-}
-
 /**************** Messages Type ENUMS *************************/
 
 abstract class MessageType {
-    const ERROR = 0;
-    const WARNING = 1;
-    const SUCCESS = 2;
-    const INFO = 3;
+    const ERROR = "error";
+    const WARNING = "warning";
+    const SUCCESS = "success";
+    const INFO = "information";
 }
 
 /**************** User Type ENUMS *************************/
@@ -59,26 +48,45 @@ abstract class MessageType {
 abstract class UserType {
     const ADMIN = 1;
 	const ENDUSER = 2;
+	const ANNONYMOUS = 3;
 }
 
 /**************** User Role ENUMS *************************/
 
 abstract class UserRole {
-	const ANNONYMOUS = 3;
     const ADMIN = 1;
-	const ENDUSER = 2;
+	const ENDUSER = 2;	
+	const ANNONYMOUS = 3;
 }
 
 /**************** User Action ENUMS *************************/
 
 abstract class UserAction {
 	const NONE = 0;
-    const SIGNIN = 3301;
-	const SIGNUP = 3302;
+
+    const SIGNIN	= 3301;
+	const SIGNUP	= 3302;
+	const DASHBOARD = 3303;
+	const LOGOUT	= 3304;
+
+	const ADDACTION		= 3401;
+	const EDITACTION	= 3403;
+	const LISTACTION	= 3403;
+	const DELACTION		= 3404;
+
+	const ADDROLE		= 3501;
+	const EDITROLE		= 3503;
+	const LISTROLE		= 3503;
+	const DELROLE		= 3504;
 }
 
 /**************** URL ENUMS *************************/
 
 abstract class URL {
 	const BACKEND = "backend";
+}
+
+abstract class MODULE {
+	const BACKEND = 1;
+	const FRONTEND = 2;
 }

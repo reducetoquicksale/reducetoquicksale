@@ -7,15 +7,13 @@
 		        <h2 class="form-login-heading">sign in now</h2>
 		        <?php get_message(); ?>
 				<div class="login-wrap">
-		            <!-- <input type="text" class="form-control" placeholder="User ID" autofocus> -->
-					<?php rander_field($arrField["field_user_name"]); ?>
+					<?php $arrField["user_name"]->render_field(); ?>
 		            <br>
-		            <!-- <input type="password" class="form-control" placeholder="Password"> -->
-					<?php rander_field($arrField["field_password"]); ?>
+					<?php $arrField["password"]->render_field(); ?>
 		            <label class="checkbox">
 		                <span class="pull-right"><a data-toggle="modal" href="login.html#myModal"> Forgot Password?</a></span>
 		            </label>
-					<?php rander_field($arrField["field_return_url"]); ?>
+					<?php $arrField["return_url"]->render_field(); ?>
 		            <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
 		        </div>
 		

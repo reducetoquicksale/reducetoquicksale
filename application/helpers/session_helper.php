@@ -1,30 +1,68 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-	
-	//global $calledController, $calledFunction;
 
+	class actionLink {
+		var $action_id, $linkPrefix, $queryString, $attributes, $preFix, $postFix;
+		function __construct($action_id, $linkText, $linkPreFix, $queryString = "", $attributes = null, $preFix = "", $postFix = ""){
+			$this->action_id	= $action_id;
+			$this->linkText		= $linkText;
+			$this->linkPreFix	= $linkPreFix;
+			$this->queryString	= $queryString;
+			$this->attributes	= $attributes;
+			$this->preFix		= $preFix;
+			$this->postFix		= $postFix;
+		}
+
+		function getLink() {
+			if(validateAction($this->action_id)) {
+				$link = $this->linkPreFix;
+				$link .= "/".getActionUrl();
+				if($this->queryString != "") { $link .= "?".$this->queryString; }
+
+				$anchor = $this->preFix;
+
+				$anchor .= '<a href="'.$link.'" ';
+				if(is_array($this->attributes)) {
+					foreach($this->attributes as $key=>$value) { 
+						$anchor .= $key.'="'.$value.'" '; 
+					}
+				}
+				$anchor .= '>'.$this->linkText.'</a>';
+
+				$anchor .= $this->postFix;
+				return $anchor;
+			}
+		}
+	}
+	
 	function getLoggedUser() {
 		$CI = &get_instance();
 		$CI->load->library("session");
 		$user = unserialize($CI->session->userdata(ProjectENUM::USER_SESSION_NAME));
+		if($user == null) { $user = new DBUser(); }
 		return $user;
 	}
 
-	function validateUserLogin($redirect) {
+	/*function validateUserLogin($redirect = null) {
 		$oUser = getLoggedUser();
 		if($oUser == null) { 
-			if($redirect == TRUE) { 
+			if($redirect != TRUE) { 
 				redirect($redirect, "refresh"); 
 			} else {
 				return FALSE;
 			}
 		}
-	}
+	}*/
 
 	function validateUserAccess($obj, $show_access_denied = false){
 		$action_id = UserAction::NONE;
+
 		if(!file_exists(DOCUMENT_ROOT."roles/actions.php")) { createActionFile(); }
 		include_once(DOCUMENT_ROOT."roles/actions.php");
+
 		global $ACTION;
+		$obj->router->class  = strtolower($obj->router->class);
+		$obj->router->method = strtolower($obj->router->method);
+
 		if(isset($ACTION[$obj->router->class][$obj->router->method])) { 
 			$action_id = $ACTION[$obj->router->class][$obj->router->method];
 			$flag = validateAction($action_id);
@@ -39,20 +77,30 @@
 	function validateAction($action_id) {
 		$flag = FALSE;
 		$oUser = getLoggedUser();
-		//$user_role_id = UserRole::ANNONYMOUS;
-		if(!empty($oUser)) {
-			if($oUser->is_super == 1) {
-				$flag = TRUE;
-				return $flag;
-			} else {
-				$user_role_id = $oUser->role_id;
-			}
+		
+		if($oUser->is_super == 1) {
+			$flag = TRUE;
+			return $flag;
 		}
-		if(!file_exists(DOCUMENT_ROOT."roles/role_".$user_role_id.".php")) { createRoleFiles(); }
-		include_once(DOCUMENT_ROOT."roles/role_".$user_role_id.".php");
+
+		if(!file_exists(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php")) { createRoleFiles(); }
+		include_once(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php");
+
 		global $ROLE_ACTION;
 		foreach ($ROLE_ACTION as $role) { if(in_array($action_id, $role)) { $flag = TRUE; } }
 		return $flag;
+	}
+
+	function getActionUrl($action_id) {
+		if(validateAction($action_id)) {
+			include_once(DOCUMENT_ROOT."roles/actions.php");
+			global $ACTION;
+			foreach ($ACTION as $controller=>$action) {
+				foreach ($action as $method=>$value) { 
+					if($value == $action_id) { return  $controller ."/". $method; }
+				}
+			}
+		}
 	}
 
 	function createRoleFiles($role_id = 0) {

@@ -1,61 +1,99 @@
-
-
-<div id="header" class="head">
-	<div class="logo-text">E-Trucking</div>
+<!--header start-->
+<header class="header black-bg">
+	<div class="sidebar-toggle-box">
+		<div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+	</div>
 	
-    <div id="right-stats-bar">
-<!-- ACCOUNT STATS STARTS HERE -->
-	<?php $this->m_core->table = T_TRANSACTION; 
-		  $this->m_core->data_only = TRUE;
-		  $this->m_core->use_join = FALSE;
-		  $this->m_core->use_pagination = FALSE;
-		  $this->m_core->filters = "";
-		  $receivables = 0;
-		  $payables = 0;
-	?>
-	<ul class="horizontal-menu">
-		<?php if(validateUserAccess("account","receivables")) { ?>
-			<?php 
-				if($this->m_core->listing(" sum(transaction_amount) AS transaction_amount ", array("transaction_mode"=>TRANSACTION_MODE_RECEIVABLE,"transaction_type"=>TRANSACTION_TYPE_ENTRY))) {
-					$receivables += $this->m_core->class_data["transaction_amount"];
-				  }
-				  if($this->m_core->listing(" sum(transaction_amount) AS transaction_amount ", array("transaction_mode"=>TRANSACTION_MODE_RECEIVABLE,"transaction_type"=>TRANSACTION_TYPE_CREDIT))) {
-					$receivables -= $this->m_core->class_data["transaction_amount"];
-				  }
-			?>
-			<li class="stats">
-				<a href="<?php echo base_url("account/receivables"); ?>">
-					<span class="stat-small">Receivable</span>
-					<span class="stat-big"><?php echo currency_format($receivables, TRUE); ?></span>
+	<!--logo start-->
+	<a href="index.html" class="logo"><b>DASHGUM FREE</b></a>
+	<!--logo end-->
+	
+	<div class="nav notify-row" id="top_menu">
+		<!--  notification start -->
+		<ul class="nav top-menu">
+			<!-- settings start -->
+			<li class="dropdown">
+				<a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+					<i class="fa fa-tasks"></i>
+					<span class="badge bg-theme">4</span>
 				</a>
+				<ul class="dropdown-menu extended tasks-bar">
+					<div class="notify-arrow notify-arrow-green"></div>
+					<li><p class="green">You have 4 pending tasks</p></li>
+					<li>
+						<a href="index.html#">
+							<div class="task-info">
+								<div class="desc">DashGum Admin Panel</div>
+								<div class="percent">40%</div>
+							</div>
+							<div class="progress progress-striped">
+								<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+									<span class="sr-only">40% Complete (success)</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="index.html#">
+							<div class="task-info">
+								<div class="desc">Database Update</div>
+								<div class="percent">60%</div>
+							</div>
+							<div class="progress progress-striped">
+								<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+									<span class="sr-only">60% Complete (warning)</span>
+								</div>
+							</div>
+						</a>
+					</li>	
+					<li class="external">
+						<a href="#">See All Tasks</a>
+					</li>
+				</ul>
 			</li>
-		<?php } ?>
+			<!-- settings end -->
+	
+			<!-- inbox dropdown start-->
+			<li id="header_inbox_bar" class="dropdown">
+				<a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+					<i class="fa fa-envelope-o"></i>
+					<span class="badge bg-theme">5</span>
+				</a>
+				<ul class="dropdown-menu extended inbox">
+					<div class="notify-arrow notify-arrow-green"></div>
+					<li><p class="green">You have 5 new messages</p></li>
+					<li>
+						<a href="index.html#">
+							<span class="photo"><img alt="avatar" src="assets/img/ui-zac.jpg"></span>
+							<span class="subject">
+								<span class="from">Zac Snider</span>
+								<span class="time">Just now</span>
+							</span>
+							<span class="message">Hi mate, how is everything?</span>
+						</a>
+					</li>
+					<li>
+						<a href="index.html#">
+							<span class="photo"><img alt="avatar" src="assets/img/ui-zac.jpg"></span>
+							<span class="subject">
+								<span class="from">Zac Snider</span>
+								<span class="time">Just now</span>
+							</span>
+							<span class="message">Hi mate, how is everything?</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- inbox dropdown end -->
+		</ul>
+		<!--  notification end -->
+	</div>
 
-		<?php if(validateUserAccess("account","payables")) { ?>
-			<?php 
-				 if($this->m_core->listing(" sum(transaction_amount) AS transaction_amount ", array("transaction_mode"=>TRANSACTION_MODE_PAYABLE,"transaction_type"=>TRANSACTION_TYPE_ENTRY))) {
-					$payables += $this->m_core->class_data["transaction_amount"];
-				  }
-				  if($this->m_core->listing(" sum(transaction_amount) AS transaction_amount ", array("transaction_mode"=>TRANSACTION_MODE_PAYABLE,"transaction_type"=>TRANSACTION_TYPE_DEBIT))) {
-					$payables -= $this->m_core->class_data["transaction_amount"];
-				  }
-			?>
-			<li class="stats">
-				<a href="<?php echo base_url("account/payables"); ?>">
-					<span class="stat-small">Payable</span>
-					<span class="stat-big"><?php echo currency_format($payables, TRUE); ?></span>
-				</a>
-			</li>
-			<li class="user">
-				<?php $oUser = getLoggedUser(); ?>
-                <div id="profile-box">
-                    <h4><?php echo $oUser->user_name; ?></h4>
-                    <p align="right"><a href="<?php echo base_url().'user/change_password'; ?>" title="Change Password"><i class="fa fa-key fa-2x"></i></a>&nbsp;&nbsp;
-                    <a href="<?php echo base_url().'logout'; ?>" title="Log Out"><i class="fa fa-sign-out fa-2x"></i></a></p>
-                </div>
-			</li>
-		<?php } ?>
-	</ul>
-    </div>
-<!-- ACCOUNT STATS ENDS HERE -->
-</div>
+	<div class="top-menu">
+		<ul class="nav pull-right top-menu">
+			<li><a class="logout" href="<?php echo base_url('backend/logout'); ?>">Logout</a></li>
+		</ul>
+	</div>
+
+</header>
+<!--header end-->

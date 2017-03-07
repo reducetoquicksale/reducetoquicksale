@@ -9,32 +9,49 @@ abstract class FieldType {
 	const RADIO = 5;
 }
 
-/*define("TEXT", "text");
-define("PASSWORD", "password");
-define("TEXTARAE", "textarea");
-define("HIDDEN", "hidden");
-define("CHECKBOX", "checkbox");
-define("RADIO", "radio");*/
-
 class form_field { 
-	var $type, $name, $value, $attributes;
-	public function form_field() {
-		$this->type = FieldType::TEXT;
-		$this->name  = "";
-		$this->value  = "";;
-		$this->attributes = NULL;
-
+	var $type, $name, $value, $attributes, $description, $message, $messageType;
+	public function form_field($type = FieldType::TEXT, $name = "", $value = "", $attributes = null, $description = "", $message = "", $messageType = "") {
+		$this->type = $type;
+		$this->name  = $name;
+		$this->value  = $value;
+		$this->attributes = $attributes;
+		$this->description = $description;
+		$this->message = $message;
+		$this->messageType = $messageType;
 	}
-}
 
-function rander_field(form_field $field) {
-	if($field->type == FieldType::PASSWORD) {
-		echo form_password($field->name, $field->value, $field->attributes); 
-		//echo getMessageTypeHtml(form_error($field->name), 'error', '');
-	} elseif($field->type == FieldType::TEXT) {
-		echo form_input($field->name, $field->value, $field->attributes);
-		//echo getMessageTypeHtml(form_error($field->name), 'error', '');
-	}  elseif($field->type == FieldType::HIDDEN) {
-		echo form_hidden($field->name, $field->value, $field->attributes); 
+	private function getDescription() {
+		if(!empty($this->description)) {
+			echo "<div class='description'>".$this->description."</div>";
+		}
+	}
+
+	private function getFormError() {
+		if(!empty(form_error($this->name))) {
+			echo getMessageTypeHtml(form_error($this->name), MessageType::ERROR);
+		}
+	}
+
+	private function getMessage() {
+		if(!empty($this->message)) {
+			echo getMessageTypeHtml($this->message, $this->messageType);
+		}
+	}
+
+	function render_field() {
+		if($this->type == FieldType::PASSWORD) {
+			echo form_password($this->name, $this->value, $this->attributes); 
+		} elseif($this->type == FieldType::TEXT) {
+			echo form_input($this->name, $this->value, $this->attributes); 
+		} elseif($this->type == FieldType::HIDDEN) {
+			echo form_hidden($this->name, $this->value, $this->attributes); 
+		} elseif($this->type == FieldType::CHECKBOX) {
+			echo form_checkbox($this->name, $this->value, $this->attributes); 
+		}
+
+		$this->getDescription();
+		$this->getFormError();
+		$this->getMessage();
 	}
 }

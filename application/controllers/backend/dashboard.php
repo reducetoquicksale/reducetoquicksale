@@ -2,13 +2,13 @@
 
 class Dashboard extends MY_Controller {
 
-	public function Dashboard() {
+	public function Dashboard() {	
 		parent::InitBackendSite();
-		validateUserLogin(URL::BACKEND . "/login");	
 	}
 
 	public function index() {
-		validateUserAccess($this, true);
+		//validateUserAccess($this, true);
+		//$this->template->load('dashboard', null);
 		
 		$data['title'] = 'Dashboard';
 		$this->template->load('', $data);

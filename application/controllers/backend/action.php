@@ -1,16 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Init extends MY_Controller {
+class Action extends MY_Controller {
 
-	public function Init() {		
-		parent::InitBackendLogin();
-		$this->load->model('m_user');
+	public function Action() {	
+		parent::InitBackendSite();
+		$this->load->model("m_action");
+		$this->load->library("grid");
 	}
-	
-	public function login() {
-		$objUser = new DBUser();
-		$objUser->user_name = "";
-		$objUser->password = "";	
+
+	public function add() {
+		$object = new DBAction();	
 
 		if($_POST != null) {
 			$objUser->user_name		= $_POST["user_name"];
@@ -36,9 +35,9 @@ class Init extends MY_Controller {
 		
 		$field_user_name			 = new form_field;
 		$field_user_name->type		 = FieldType::TEXT;
-		$field_user_name->name		 = "user_name";
-		$field_user_name->value		 = $objUser->user_name;
-		$field_user_name->attributes = array("id" => "user_name", "class" => "form-control", "placeholder" => "User ID");
+		$field_user_name->name		 = "action_name";
+		$field_user_name->value		 = $object->action_name;
+		$field_user_name->attributes = array("id" => "action_name", "class" => "form-control", "placeholder" => "Action Name");
 		
 		$field_password				 = new form_field;
 		$field_password->type		 = FieldType::PASSWORD;
@@ -49,25 +48,23 @@ class Init extends MY_Controller {
 		$field_return_url			 = new form_field;
 		$field_return_url->type		 = FieldType::HIDDEN;
 		$field_return_url->name		 = "return_url";
-		//$field_return_url->value	 = $this->return_url;
+		//$field_return_url->value	 = $return_url;
 
-		$data["arrField"]			 = array("user_name" => $field_user_name, "password" => $field_password, "return_url" => $field_return_url);
-		$data['title']				 = 'Login';
+		$data["arrField"]			 = array("field_user_name" => $field_user_name, "field_password" => $field_password, "field_return_url" => $field_return_url);
+		$data['title']				 = 'Add Action';
 
-		$this->template->add_js(array("assets/backend/js/jquery.backstretch.min.js"));
-		$this->template->load('login', $data, TPLBackend::BLANK);
+		$this->template->load('login', $data);
 	}
 
-	public function logout() {
-		$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, "");
-		redirect(URL::BACKEND . '/login');
-	}
+	public function pagedList() {
 
-	public function help() {
-		$data["title"] = "Help";
-		$this->template->load('help', $data, TPLFile::BLANK);
+		$this->grid->addColumn(new gridColumn("Action Name", "action_name"));
+		$this->grid->addColumn(new gridColumn("Controller", "controller"));
+		$this->grid->addColumn(new gridColumn("Method", "function"));
+		$this->grid->setData($this->m_action->pagedList());
+		$this->grid->setID_field("action_id");
+
+		$data['title']	= 'Actions';
+		$this->template->load("action/pagedList", $data);
 	}
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */

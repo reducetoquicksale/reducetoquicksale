@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class MY_COnfig extends CI_Config {
+class MY_Config extends CI_Config {
 
 	public function __construct() {
 		parent::__construct();

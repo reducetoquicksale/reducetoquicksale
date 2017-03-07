@@ -1,99 +1,120 @@
 <?php 
-	global $links, $calledController, $calledFunction;
-	/*
-	$parentLink = NULL;
-	$arrLinks = array();
-	foreach($links as $parent) {
-		if(isset($parent["child"])) {
-			foreach($parent["child"] as $child1) {
-				if(isset($child1["child"])) {
-					foreach($child1["child"] as $child2) {
-						if(strtolower($child2["controller"]) == $calledController) {							
-							$parentLink = $parent["title"]["title"];
-							$arrLinks = $parent["child"];
-						}
-					}
-				} else {
-					if(strtolower($child1["controller"]) == $calledController) {
-						$parentLink = $parent["title"]["title"];
-						$arrLinks = $parent["child"];
+	class SideBarItem {
+		var $name, $action_id, $url, $submenu;
+		public function __construct($name, $action_id, $url = "#", $submenu = null) {
+			$this->name			= $name;
+			$this->action_id	= $action_id;
+			$this->url			= $url;
+			$this->submenu		= $submenu;
+		}
+
+		public function getUrl() {
+			if($this->url != "#" || $this->action_id == UserAction::NONE) {
+				return $this->url;
+			} else {
+				return backendUrl(getActionUrl($this->action_id));
+			}
+		}
+
+		public function getClass() {
+			return strtolower($this->name);
+		}
+
+		public function getName() {
+			return ucfirst($this->name);
+		}
+
+		public function isActive() {
+			$flag = false;
+			if(currentUrl() == $this->getUrl()) {
+				$flag = true;
+			} elseif($this->action_id == UserAction::NONE && $this->submenu != null) {
+				foreach($this->submenu as $temp) { 
+					if(currentUrl() == $temp->getUrl()) {
+						$flag = true;
 					}
 				}
 			}
-		} else {
-			$parentLink = $calledController;
+			return $flag;
 		}
-	}
-	*/
-?>
-<script type="text/javascript">
-ddlevelsmenu.setup("dropdown", "sidebar") //ddlevelsmenu.setup("mainmenuid", "topbar|sidebar")
-</script>
-<div id="navigation">
-	<div id="small-logo">
-    	Logo
-    </div>
-	<h3>Main Menu</h3>
-	<div class="menu-wrapper">
-		<ul class="box markermenu" id="dropdown">
-			<li><a href="<?php echo base_url(); ?>dashboard"><i class="fa fa-tachometer fa-2x"></i><br />Dashboard</a></li>
-			<?php 
-				foreach($links as $link) {
-					$flag = FALSE;				
-					if($link["controller"] == "#") {
-						if(isset($link["child"])) {
-							foreach($link["child"] as $child) {
-								if($child["controller"] == "#") {
-									if(isset($child["child"])) {
-										foreach($child["child"] as $c) {
-											$flag = validateUserAccess($c["controller"],$c["function"]);
-											if($flag == TRUE) {	break; }
-										}
-									}
-								} else {
-									$flag = validateUserAccess($child["controller"],$child["function"]);
-									if($flag == TRUE) { break; }
-								}
-							}
-						}
-					} else {
-						$flag = validateUserAccess($link["controller"],$link["function"]);
-					}
-					
-					if($flag == TRUE) {
-						if($link["controller"] == "#") {
-							echo '<li>';
-							echo getLink($link, TRUE);
-							if(isset($link["child"])) {
-								echo '<ul id="'.$link['title']['title'].'" class="ddsubmenustyle blackwhite">';
-								foreach($link["child"] as $child) {
-									if(($temp = getLink($child, TRUE)) != "") { echo "<li>".$temp; }
-									if(isset($child["child"])) {
-										$tFlag = FALSE;
-										foreach($child["child"] as $c) {
-											if(validateUserAccess($c["controller"],$c["function"])) {
-												if($tFlag == FALSE) {
-													echo "<ul>";
-													$tFlag = TRUE;
-												}
-												echo getLink($c);
-											}
-										}
-										if($tFlag == TRUE) {
-											echo "</ul>";
-										}
-									}
-									if($temp != "") { echo "</li>"; }
-								}
-								echo "</ul>";
-							}
-							echo "</li>";
-						} else {
-							echo getLink($link);
-						}
+
+		public function hasAccess() {
+			if($this->action_id == UserAction::NONE && $this->submenu != null) {
+				$hasAccess = false;
+				foreach($this->submenu as $temp) { 
+					if(validateAction($temp->action_id)) {
+						$hasAccess = true;
+						break;
 					}
 				}
-			?>
+				return $hasAccess;
+			} else {
+				return TRUE;
+			}
+		}
+	}
+
+	$arrSideBarItem[] = new SideBarItem("DashBoard", UserAction::DASHBOARD, backendUrl("dashboard"));
+
+	$submenu = array();
+	$submenu[] = new SideBarItem("Add Actions", UserAction::ADDACTION, backendUrl("action/add"));
+	$submenu[] = new SideBarItem("Manage Actions", UserAction::LISTACTION, backendUrl("action/pagedList"));
+	$arrSideBarItem[] = new SideBarItem("Actions", UserAction::NONE, "javascript:;", $submenu);
+
+	$submenu = array();
+	$submenu[] = new SideBarItem("Add Role", UserAction::ADDROLE);
+	$submenu[] = new SideBarItem("Manage Roles", UserAction::LISTROLE);
+	$arrSideBarItem[] = new SideBarItem("Roles", UserAction::NONE, "javascript:;", $submenu);
+
+	$submenu = array();
+	$submenu[] = new SideBarItem("DashBoard", UserAction::DASHBOARD);
+	$arrSideBarItem[] = new SideBarItem("User", UserAction::NONE, "javascript:;", $submenu);
+?>
+
+<!--sidebar start-->
+<?php $userData = getLoggedUser(); ?>
+<aside>
+	<div id="sidebar"  class="nav-collapse ">
+		<!-- sidebar menu start-->
+		<ul class="sidebar-menu" id="nav-accordion">
+			<p class="centered"><a href="profile.html"><img src="assets/img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+			<h5 class="centered"><?php echo $userData->user_name; ?></h5>
+			<?php foreach($arrSideBarItem as $item) { if(!$item->hasAccess()) { continue; } ?>
+				<li class="<?php echo $item->submenu == null ? "mt" : "sub-menu"; ?>" >
+					<a href="<?php echo $item->getUrl(); ?>" <?php if($item->isActive()) echo ' class="active"'; ?>>
+						<i class="fa fa-<?php $item->getClass(); ?>"></i>
+						<span><?php echo $item->getName(); ?></span>
+					</a>
+					<?php if($item->submenu != null) { ?>
+						<ul class="sub">
+							<?php foreach($item->submenu as $temp) { 
+									if($temp->hasAccess()) { ?>
+										<li><a href="<?php echo $temp->getUrl(); ?>"><?php echo $temp->getName(); ?></a></li>
+							<?php }  } ?>
+						</ul>
+					<?php } ?>
+				</li>
+			<?php } ?>
+
+			<!-- <li class="mt">
+				<a href="<?php echo backendUrl('dashboard'); ?>"<?php if(!isset($module)) echo ' class="active"'; ?>>
+					<i class="fa fa-dashboard"></i>
+					<span>Dashboard</span>
+				</a>
+			</li>
+
+			<li class="sub-menu">
+				<a href="javascript:;"<?php if(isset($module) && $module == 'user') echo ' class="active"'; ?>>
+					<i class="fa fa-users"></i>
+					<span>User</span>
+				</a>
+				<ul class="sub">
+					<li><a href="<?php echo base_url('backend/user/add'); ?>">Add User</a></li>
+					<li><a href="<?php echo base_url('backend/user/manage'); ?>">Manage User</a></li>
+				</ul>
+			</li> -->
 		</ul>
+		<!-- sidebar menu end-->
 	</div>
-</div>
+</aside>
+<!--sidebar end-->
