@@ -19,4 +19,19 @@ class M_User extends M_Core
 			return null;
 		}
 	}
+	
+	function pagedList() {
+		$this->use_pagination = TRUE;
+		$this->data_only = FALSE;
+		if($this->getAll(DB_Table::USER)) {
+			$arrAction = array();
+			foreach($this->result as $row) {
+				$arrAction[] = $row;
+				//$arrAction[] = arrayToClassObj(new DBAction(), $row);
+			}
+			return $arrAction;
+		} else {
+
+		}
+	}
 }

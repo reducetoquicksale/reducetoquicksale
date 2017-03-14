@@ -288,3 +288,30 @@
 	function backendUrl($url) {
 		return base_url(URL::BACKEND ."/". $url);
 	}
+
+	function custom_validation_errors(){
+	$CI =& get_instance();
+	$errors_list = $CI->form_validation->error_array();
+	foreach($errors_list as $name => $error){
+		echo '<p class="'.$name.'">'.$error.'</p>';
+	}
+}
+
+function render_error_success_msg(){
+	$CI =& get_instance();
+	$msg = $CI->session->flashdata(); 
+	if(is_array($msg) && array_key_exists('msg_type', $msg)){
+		if($msg['msg_type'] == 'success')
+			$class = 'alert alert-success';
+		if($msg['msg_type'] == 'error')
+			$class = 'alert alert-danger';
+		echo '<div class="'.$class.'">';
+		echo '<p>'.$msg['msg'].'<p>';
+		echo '</div>';
+	}
+	if(validation_errors()){
+		echo '<div class="alert alert-danger">';
+		echo custom_validation_errors();
+		echo '</div>';
+	}
+}

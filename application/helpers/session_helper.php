@@ -54,6 +54,14 @@
 	}*/
 
 	function validateUserAccess($obj, $show_access_denied = false){
+		
+		$oUser = getLoggedUser();
+		
+		if($oUser->is_super == 1) {
+			$flag = TRUE;
+			return $flag;
+		}
+
 		$action_id = UserAction::NONE;
 
 		if(!file_exists(DOCUMENT_ROOT."roles/actions.php")) { createActionFile(); }

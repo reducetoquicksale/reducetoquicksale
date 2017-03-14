@@ -125,7 +125,7 @@ class M_Core extends CI_Model
 		}
 
         if($query->num_rows() > 0){
-            $this->result = $query->result_array();
+            $this->result = $query->result_object();
             return true;
         } else{
             $this->message = "Sorry! No Record Found";
@@ -136,7 +136,7 @@ class M_Core extends CI_Model
     function get(string $sql) {
         $query = $this->db->query($sql);
         if($query->num_rows() > 0){
-            $this->result = $query->result_array();
+            $this->result = $query->result_object();
             return true;
         } else{
             $this->message = "Sorry! No Record Found";
