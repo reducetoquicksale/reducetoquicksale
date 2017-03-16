@@ -1,3 +1,25 @@
+<?php if($section == "script") { ?>
+
+$(document).ready(function(e) {
+	$('#deleteModal').on('show.bs.modal', function (e) {
+		var button = e.relatedTarget;
+		var id = button.id;
+		var name = $('#name'+id).text();
+		$('#delName').text(name);
+		var delLink = '<?php echo base_url(); ?>backend/user/delete/'+id
+		$('#delBtn').attr('href', delLink);
+	})
+    
+    $('.check_uncheck_all').click(function(){
+    	var checked_val = $(this).attr('checked');
+        if(checked_val == 'checked')
+        	$('.check_field').attr('checked', true);
+        else
+        	$('.check_field').attr('checked', false);
+    });
+});
+
+<?php } if($section == "body") { ?>
 <!-- Modal -->
 						<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-dialog">
@@ -33,46 +55,18 @@
               <div class="row mt">
                   <div class="col-md-12">
                       <div class="content-panel">
-                          <table class="table table-striped table-advance table-hover">
-	                  	  	  <h4><i class="fa fa-angle-right"></i> User Details</h4>
-                      <?php $msg = $this->session->flashdata(); 
-					  		if(is_array($msg) && array_key_exists('msg_type', $msg)){
-								if($msg['msg_type'] == 'success')
-									$class = 'alert alert-success';
-								if($msg['msg_type'] == 'error')
-									$class = 'alert alert-danger';
-								echo '<div class="'.$class.'">';
-								echo $msg['msg'];
-								echo '</div>';
-							}
-					  ?>
-	                  	  	  <hr>
-                              <thead>
-                              <tr>
-                                  <th><i class=" fa fa-edit"></i> Status</th>
-                                  <th><i class="fa fa-bullhorn"></i> Name</th>
-                                  <th><i class="fa fa-bookmark"></i> User Type</th>
-                                  <th><i class="fa fa-question-circle"></i> User ID</th>
-                                  <th></th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              <tr>
-                                  <td>
-                                  	<span class="label label-warning label-mini">In-Active</span>
-                                  	<span class="label label-success label-mini">Active</span>
-                                  </td>
-                                  <td><a href="<?php echo base_url('backend/user/view'); ?>">User Name</a></td>
-                                  <td>Admin</td>
-                                  <td>admin</td>
-                                  <td>
-                                      <a class="btn btn-success btn-xs" href="#" title="Set Active"><i class="fa fa-check"></i></a>
-                                      <a class="btn btn-danger btn-xs" href="#" title="Set Inactive"><i class="fa fa-ban"></i></a>
-                                      <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id=""><i class="fa fa-trash-o "></i></button>
-                                  </td>
-                              </tr>
-                              </tbody>
-                          </table>
+	                  	  <h4><i class="fa fa-angle-right"></i> User Details</h4>
+	                  	  <hr>
+                          <?php 
+						  
+		$grid_attributes['grid'] = array(
+									'class'=>'table table-striped table-advance table-hover'
+								);
+		$grid_attributes['grid_row'] = '';
+		$grid_attributes['grid_column'] = '';
+		
+		echo $this->datagrid->renderGrid($grid_attributes);
+						  ?>
                           <div align="center">
                           <div class="btn-group">
                           <?php //echo $this->pagination->create_links(); ?>
@@ -82,16 +76,4 @@
                   </div><!-- /col-md-12 -->
               </div><!-- /row -->
 
-
-<script>
-$(document).ready(function(e) {
-	$('#deleteModal').on('show.bs.modal', function (e) {
-		var button = e.relatedTarget;
-		var id = button.id;
-		var name = $('#name'+id).text();
-		$('#delName').text(name);
-		var delLink = '<?php echo base_url(); ?>user/delete/'+id
-		$('#delBtn').attr('href', delLink);
-	})
-});
-</script>
+<?php }?>

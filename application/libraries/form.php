@@ -138,6 +138,10 @@ class Form {
 	}
 	
 	public function renderField($field_name){
+		if(is_object($field_name)){
+			$this->addFormField($field_name);
+			$field_name = $field_name->name;
+		}
 		foreach($this->formFieldMainArray as $index => $value){
 			if($value->name == $field_name)
 				break;
@@ -145,8 +149,8 @@ class Form {
 		
 		$attributes = $value->attributes;
 		$attributes['id'] = $value->id;
-		if(!empty($value->attributes))
-			$field['attributes'] = $value->attributes;
+		//if(!empty($value->attributes))
+			//$field['attributes'] = $value->attributes;
 			
 		if(set_value($value->name) != "")
 			$set_value = set_value($value->name);
@@ -178,17 +182,26 @@ class Form {
 				else if(isset($attributes['checked']) && is_array($attributes['checked']))
 					$dummy_checked = $attributes['checked'];
 				unset($attributes['checked']);
+				
+				if(!is_array($value->value))
+					$value->value = array($value->value=>"");
+					
 				foreach($value->value as $val=>$lab){
 					$checked = FALSE;
 					if(isset($dummy_checked) && in_array($val, $dummy_checked))
 						$checked = TRUE;
 					$attributes['id'] = $value->name.'_'.$val;
-					$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
+					if($lab != "")
+						$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
 					$formHtml .= form_checkbox($value->name, $val, $checked, $attributes);
-					$formHtml .= $lab.'</label>';
+					if($lab != "")
+						$formHtml .= $lab.'</label>';
 				}
 				break;
 			case Form::RADIO:
+				if(!is_array($value->value))
+					$value->value = array($value->value=>"");
+					
 				foreach($value->value as $val=>$lab){
 					$checked = FALSE;
 					if(set_value($value->name) != "" && $set_value == $val)
@@ -197,9 +210,11 @@ class Form {
 						$checked = TRUE;
 					unset($attributes['checked']);
 					$attributes['id'] = $value->name.'_'.$val;
-					$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
+					if($lab != "")
+						$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
 					$formHtml .= form_radio($value->name, $val, $checked, $attributes);
-					$formHtml .= $lab.'</label>';
+					if($lab != "")
+						$formHtml .= $lab.'</label>';
 				}
 				break;
 			case Form::SELECT:
@@ -233,8 +248,8 @@ class Form {
 				$formHtml = form_button($value->name, $value->value, $attributes);
 				break;
 		}
-		
-		unset($this->formFieldMainArray[$index]);
+		if(isset($index))
+			unset($this->formFieldMainArray[$index]);
 		return $formHtml;
 	}
 	

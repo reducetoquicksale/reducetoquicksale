@@ -67,7 +67,8 @@
 	$arrSideBarItem[] = new SideBarItem("Roles", UserAction::NONE, "javascript:;", $submenu);
 
 	$submenu = array();
-	$submenu[] = new SideBarItem("Add User", UserAction::DASHBOARD);
+	$submenu[] = new SideBarItem("Add User", UserAction::DASHBOARD, base_url('backend/user/add'));
+	$submenu[] = new SideBarItem("Manage User", UserAction::DASHBOARD, base_url('backend/user/manage'));
 	$arrSideBarItem[] = new SideBarItem("User", UserAction::NONE, "javascript:;", $submenu);
 ?>
 
