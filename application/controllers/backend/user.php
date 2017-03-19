@@ -56,9 +56,8 @@ class User extends MY_Controller {
 			}
 		}
 		
-		$main_data['form'] = $this->form->renderForm();
-		$main_data['title'] = 'Add User';
 		$main_data['module'] = 'user';
+		$this->template->set_title('Add User');
 		$this->template->load('user/add_user', $main_data);
 	}
 
@@ -105,10 +104,10 @@ class User extends MY_Controller {
 			}, Datagrid::CALLBACK);
 		
 		//$user_data = $this->m_user->pagedList();
-		$this->datagrid->setData('m_user', 'pagedList');
+		$this->datagrid->setData('m_user', 'get_rows');
 
-		$data['title'] = 'Manage Users';
 		$data['module'] = 'user';
+		$this->template->set_title('Manage Users');
 		$this->template->load("user/manage_user", $data);
 	}
 	

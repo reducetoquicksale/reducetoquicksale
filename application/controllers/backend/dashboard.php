@@ -10,7 +10,7 @@ class Dashboard extends MY_Controller {
 		//validateUserAccess($this, true);
 		//$this->template->load('dashboard', null);
 		
-		$data['title'] = 'Dashboard';
-		$this->template->load('', $data);
+		$this->template->set_title('Dashboard');
+		$this->template->load('');
 	}
 }

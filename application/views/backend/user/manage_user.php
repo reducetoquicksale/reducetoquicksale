@@ -1,5 +1,4 @@
-<?php if($section == "script") { ?>
-
+<?php $this->template->add_script("
 $(document).ready(function(e) {
 	$('#deleteModal').on('show.bs.modal', function (e) {
 		var button = e.relatedTarget;
@@ -18,8 +17,7 @@ $(document).ready(function(e) {
         	$('.check_field').attr('checked', false);
     });
 });
-
-<?php } if($section == "body") { ?>
+") ?>
 <!-- Modal -->
 						<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						  <div class="modal-dialog">
@@ -69,11 +67,9 @@ $(document).ready(function(e) {
 						  ?>
                           <div align="center">
                           <div class="btn-group">
-                          <?php //echo $this->pagination->create_links(); ?>
+                          <?php echo $this->pagination->create_links(); ?>
                           </div>
                           </div>
                       </div><!-- /content-panel -->
                   </div><!-- /col-md-12 -->
               </div><!-- /row -->
-
-<?php }?>

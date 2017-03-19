@@ -20,7 +20,15 @@ class M_User extends M_Core
 		}
 	}
 	
-	function pagedList() {
+	public function get_rows($where="", $limit="", $start=""){
+		if($where != "")
+			$this->db->where($where);
+		$this->db->select("*");
+		$result = $this->db->get(DB_Table::USER, $start, $limit);
+		return $result;
+	}
+	
+	function pagedList($start, $limit) {
 		$this->use_pagination = TRUE;
 		$this->data_only = FALSE;
 		if($this->getAll(DB_Table::USER)) {
