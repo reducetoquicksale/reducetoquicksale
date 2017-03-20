@@ -54,16 +54,16 @@ class Template{
 		
 		$META = $this->CI->config->item($loaded_template.'_META');
 		if(is_array($META))
-			$this->add_meta($META);
+			$this->meta = array_merge($META, $this->meta);
 		$HEAD_LINK = $this->CI->config->item($loaded_template.'_HEAD_LINK');
 		if(is_array($HEAD_LINK))
-			$this->add_head_link($HEAD_LINK);
+			$this->head_links = array_merge($HEAD_LINK, $this->head_links);
 		$CSS_FILES = $this->CI->config->item($loaded_template.'_CSS_FILES');
 		if(is_array($CSS_FILES))
-			$this->add_css($CSS_FILES);
+			$this->css_files = array_merge($CSS_FILES, $this->css_files);
 		$SCRIPT_FILES = $this->CI->config->item($loaded_template.'_SCRIPT_FILES');
 		if(is_array($SCRIPT_FILES))
-			$this->add_script($SCRIPT_FILES);
+			$this->script_files = array_merge($SCRIPT_FILES, $this->script_files);
 		$STRUCTURE = $this->CI->config->item($loaded_template.'_STRUCTURE');
 		if(is_array($STRUCTURE))
 			$this->set($STRUCTURE);
@@ -178,7 +178,7 @@ class Template{
 		return $html_head;
 	}
 	
-	public function view($view_name="", $main_data=array(), $template_to_load=""){
+	public function load($view_name="", $main_data=array(), $template_to_load=""){
 		if(is_string($template_to_load) && trim($template_to_load) != "")
 			$this->template_to_load = strtoupper(trim($template_to_load));
 			
@@ -188,7 +188,7 @@ class Template{
 		
 		$index = array_search('[main]', $this->views_to_load);
 		if($view_name != ""){
-			$this->views_to_load[$index] = $view_name;
+			$this->views_to_load[$index] = $this->config['VIEW_FOLDER'].'/'.$view_name;
 		}
 		else
 			unset($this->views_to_load[$index]);

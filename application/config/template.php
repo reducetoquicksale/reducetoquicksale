@@ -47,4 +47,34 @@ $config['MAIN_MINIFY_CSS'] = FALSE;
 $config['MAIN_MINIFY_SCRIPT'] = FALSE;
 $config['MAIN_COMPRESSED_FOLDER'] = 'compressed';
 
+
+// TEMPLATE CONFIGRATIONS FOR BLANK
+$config['BLANK_VIEW_FOLDER'] = 'backend';
+$config['BLANK_TITLE_PREFIX'] = '';
+$config['BLANK_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
+$config['BLANK_META'] = array(
+					'viewport' => 'width=device-width, initial-scale=1, maximum-scale=1'
+				);
+$config['BLANK_HEAD_LINK'] = array(
+					'icon' => 'images/favicons/favicon.ico',
+					'apple-touch-icon' => 'images/favicons/apple-touch-icon.png'
+				);
+$config['BLANK_CSS_FILES'] = array( 
+					base_url("assets/backend/css/bootstrap.css"), 
+					base_url("assets/backend/font-awesome/css/font-awesome.css"), 
+					base_url("assets/backend/css/style.css"),
+					base_url("assets/backend/css/style-responsive.css")
+);
+$config['BLANK_SCRIPT_FILES'] = array(
+					base_url("assets/backend/js/jquery.js"),
+					base_url("assets/backend/js/bootstrap.min.js")
+);
+$config['BLANK_STRUCTURE'] = array(
+					'[main]'
+				);
+
+$config['BLANK_MINIFY_CSS'] = FALSE;
+$config['BLANK_MINIFY_SCRIPT'] = FALSE;
+$config['BLANK_COMPRESSED_FOLDER'] = 'compressed';
+
 ?>

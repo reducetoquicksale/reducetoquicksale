@@ -25,10 +25,7 @@ class MY_Controller extends CI_Controller {
 
 	public function InitBackendLogin() { 
 		self::__construct();
-		$this->template->load_config('template-backend');
-		$this->template->add_js(array(
-				"assets/backend/js/jquery.backstretch.min.js"
-		));
+		//$this->template->load_config('template-backend');
 	}
 
 	public function InitBackendSite() { 

@@ -37,7 +37,29 @@ class Datagrid {
 	// SET DATABASE DATA TO DISPLAY IN GRID
 	public function setData($model, $function){
 		$this->CI->load->model($model);
+		$this->CI->load->library('pagination');
 		$data = $this->CI->$model->$function();
+		
+		// NEED TO SET BASE URL AND PAGE NO URI SEGMENTS
+		$total_rows = $data->num_rows();
+		$config['base_url'] = base_url($this->CI->uri->segment(1).'/'.$this->CI->uri->segment(2).'/'.$this->CI->uri->segment(3));
+		$config['total_rows'] = $total_rows;
+		$config['attributes'] = array('class' => 'btn btn-default');
+		$config['per_page'] = 1;
+    	$config['use_page_numbers'] = TRUE;
+		$config['reuse_query_string'] = TRUE;
+		$config['cur_tag_open'] = '<span class="btn btn-default">';
+		$config['cur_tag_close'] = '</span>';
+		if($this->CI->uri->segment(4)){
+			$page = ($this->CI->uri->segment(4)) ;
+		}
+		else{
+			$page = 1;
+		}
+		$data = $this->CI->$model->$function('', $config['per_page']*($page-1), $config['per_page']);
+		
+		$this->CI->pagination->initialize($config);
+		
 		$this->arrData = $data;
 	}
 	
@@ -83,7 +105,7 @@ class Datagrid {
 			$htmlColEndTag = '</div>';
 		}
 		// LOOPING DATABASE ROWS
-		foreach($this->arrData as $row_data){
+		foreach($this->arrData->result() as $row_data){
 			$html .= $htmlRowStartTag;
 			foreach($this->arrColumn as $val){
 				$html .= $htmlColStartTag;

@@ -5,7 +5,7 @@ class M_User extends M_Core
 		parent::__construct(); 
 	}
 
-	function authenticate(user $objUser)	{
+	function authenticate(DBuser $objUser)	{
 		$objUser->password = sha1($objUser->password);
 		$sql = "SELECT ".DB_Table::USER.".* FROM ".DB_Table::USER." WHERE user_name = '".$objUser->user_name."' and password = '$objUser->password'";
 		if($this->get_single_row($sql)) {

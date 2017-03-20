@@ -1,20 +1,22 @@
-<?php if($section == "script") { ?>
-	$.backstretch("<?php echo base_url("assets/backend/img/login-bg.jpg"); ?>", {speed: 500});
-<?php } if($section == "body") { ?>		
+<?php $this->template->add_script('
+	$.backstretch("'.base_url("assets/backend/img/login-bg.jpg").'", {speed: 500});
+') ?>
+<body>
 	<div id="login-page">
 	  	<div class="container">	  	
 		      <form class="form-login" action="" method="post">
 		        <h2 class="form-login-heading">sign in now</h2>
 		        <div class="login-wrap">
+                <?php echo $this->form->renderForm(); ?>
 		            <!-- <input type="text" class="form-control" placeholder="User ID" autofocus> -->
-					<?php rander_field($arrField["field_user_id"]); ?>
+					<?php //rander_field($arrField["field_user_id"]); ?>
 		            <br>
 		            <!-- <input type="password" class="form-control" placeholder="Password"> -->
-					<?php rander_field($arrField["field_password"]); ?>
+					<?php //rander_field($arrField["field_password"]); ?>
 		            <label class="checkbox">
 		                <span class="pull-right"><a data-toggle="modal" href="login.html#myModal"> Forgot Password?</a></span>
 		            </label>
-					<?php rander_field($arrField["field_return_url"]); ?>
+					<?php //rander_field($arrField["field_return_url"]); ?>
 		            <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
 		        </div>
 		
@@ -44,4 +46,4 @@
 	  	
 	  	</div>
 	</div>
-<?php } ?>
+</body>

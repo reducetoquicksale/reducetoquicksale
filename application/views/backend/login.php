@@ -1,19 +1,17 @@
-<?php if($section == "script") { ?>
-	$.backstretch("<?php echo base_url("assets/backend/img/login-bg.jpg"); ?>", {speed: 500});
-<?php } if($section == "body") { ?>		
+<?php $this->template->add_script('
+	$.backstretch("'.base_url("assets/backend/img/login-bg.jpg").'", {speed: 500});
+') ?>	
+<body>
 	<div id="login-page">
 	  	<div class="container">	  	
 		      <form class="form-login" action="" method="post">
 		        <h2 class="form-login-heading">sign in now</h2>
 		        <?php get_message(); ?>
 				<div class="login-wrap">
-					<?php $arrField["user_name"]->render_field(); ?>
-		            <br>
-					<?php $arrField["password"]->render_field(); ?>
+                <?php echo $this->form->renderForm(); ?>
 		            <label class="checkbox">
 		                <span class="pull-right"><a data-toggle="modal" href="login.html#myModal"> Forgot Password?</a></span>
 		            </label>
-					<?php $arrField["return_url"]->render_field(); ?>
 		            <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> SIGN IN</button>
 		        </div>
 		
@@ -43,4 +41,4 @@
 	  	
 	  	</div>
 	</div>
-<?php } ?>
+</body>

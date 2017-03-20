@@ -8,6 +8,7 @@ class Init extends MY_Controller {
 	}
 	
 	public function login() {
+		$this->load->library('form');
 		$objUser = new DBUser();
 		$objUser->user_name = "";
 		$objUser->password = "";	
@@ -17,10 +18,10 @@ class Init extends MY_Controller {
 			$objUser->password		= $_POST["password"];
 			$return_url				= $_POST["return_url"];
 
-			$this->form_validation->set_rules('user_name', 'Login Id', 'required');
-			$this->form_validation->set_rules('password', 'Password', 'required');
+			//$this->form_validation->set_rules('user_name', 'Login Id', 'required');
+			//$this->form_validation->set_rules('password', 'Password', 'required');
 			
-			if($this->form_validation->run() == true) { 
+			if($this->form->validateForm()) { 
 				$objUser = $this->m_user->authenticate($objUser);
 				if($objUser != null) {	
 					$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, serialize($objUser));					
@@ -34,33 +35,43 @@ class Init extends MY_Controller {
 			}
 		}
 		
-		$field_user_name			 = new form_field;
-		$field_user_name->type		 = FieldType::TEXT;
-		$field_user_name->name		 = "user_name";
-		$field_user_name->value		 = $objUser->user_name;
-		$field_user_name->attributes = array("id" => "user_name", "class" => "form-control", "placeholder" => "User ID");
+		//$this->form->config(array('template_path'=>'backend/form_template'));
 		
-		$field_password				 = new form_field;
-		$field_password->type		 = FieldType::PASSWORD;
-		$field_password->name		 = "password";
-		$field_password->value		 = "";
-		$field_password->attributes  = array("id" => "password", "class" => "form-control", "placeholder" => "Password");
+		$field = new stdClass();
+		$field->type = Form::TEXT;
+		$field->name = "user_name";
+		$field->attributes = array(
+							"placeholder" => "User ID",
+							"class" => "form-control"
+						);
+		$field->validation = "required";
+		$this->form->addFormField($field);
+		
+		$field = new stdClass();
+		$field->type = Form::PASSWORD;
+		$field->name = "password";
+		$field->attributes = array(
+							"placeholder" => "Password",
+							"class" => "form-control"
+						);
+		$field->validation = "required";
+		$this->form->addFormField($field);
+		
+		$field = new stdClass();
+		$field->type = Form::HIDDEN;
+		$field->name = "return_url";
+		$this->form->addFormField($field);
 
-		$field_return_url			 = new form_field;
-		$field_return_url->type		 = FieldType::HIDDEN;
-		$field_return_url->name		 = "return_url";
-		//$field_return_url->value	 = $this->return_url;
-
-		$data["arrField"]			 = array("user_name" => $field_user_name, "password" => $field_password, "return_url" => $field_return_url);
+		//$data["arrField"]			 = array("user_name" => $field_user_name, "password" => $field_password, "return_url" => $field_return_url);
 		$data['title']				 = 'Login';
-
-		$this->template->add_js(array("assets/backend/js/jquery.backstretch.min.js"));
-		$this->template->load('login', $data, TPLBackend::BLANK);
+		
+		$this->template->add_script(array(base_url("assets/backend/js/jquery.backstretch.min.js")));
+		$this->template->load('login', $data, 'blank');
 	}
 
 	public function logout() {
 		$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, "");
-		redirect(URL::BACKEND . '/login');
+		redirect(URL::BACKEND . '/init/login');
 	}
 
 	public function help() {
