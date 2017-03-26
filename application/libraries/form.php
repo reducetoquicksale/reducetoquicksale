@@ -137,7 +137,7 @@ class Form {
 		return $formHtml;
 	}
 	
-	public function renderField($field_name){
+	public function renderField($field_name, $custom_attributes=""){
 		if(is_object($field_name)){
 			$this->addFormField($field_name);
 			$field_name = $field_name->name;
@@ -148,6 +148,8 @@ class Form {
 		}
 		
 		$attributes = $value->attributes;
+		if(is_array($custom_attributes))
+			$attributes = $this->array_add($attributes, $custom_attributes);
 		$attributes['id'] = $value->id;
 		//if(!empty($value->attributes))
 			//$field['attributes'] = $value->attributes;
@@ -206,9 +208,10 @@ class Form {
 					$checked = FALSE;
 					if(set_value($value->name) != "" && $set_value == $val)
 						$checked = TRUE;
-					else if(isset($attributes['checked']) && $attributes['checked'] == $val)
+					else if(isset($attributes['checked']) && $attributes['checked'] == $val){
 						$checked = TRUE;
-					unset($attributes['checked']);
+						unset($attributes['checked']);
+					}
 					$attributes['id'] = $value->name.'_'.$val;
 					if($lab != "")
 						$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
@@ -251,6 +254,18 @@ class Form {
 		if(isset($index))
 			unset($this->formFieldMainArray[$index]);
 		return $formHtml;
+	}
+	
+	public function renderLabel($field_name, $attributes = ""){
+		if(is_object($field_name)){
+			$this->addFormField($field_name);
+			$field_name = $field_name->name;
+		}
+		foreach($this->formFieldMainArray as $index => $value){
+			if($value->name == $field_name)
+				break;
+		}
+		return form_label($value->label, $value->id, $attributes);
 	}
 	
 	public function label($attributes = ""){

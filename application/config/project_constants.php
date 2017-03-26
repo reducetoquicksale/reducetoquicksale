@@ -32,6 +32,7 @@ abstract class ProjectENUM {
     const APPLICATION_TITLE = "Reduce To Quick Sale";
     const USER_SESSION_NAME = "ReduceToQuickSale";
     const CURRENCY_SIGN = "$";
+    const ROWS_TO_SHOW = 10;
 }
 
 /**************** Messages Type ENUMS *************************/

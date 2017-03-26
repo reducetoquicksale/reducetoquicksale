@@ -22,17 +22,18 @@ class MY_Controller extends CI_Controller {
 		$this->previous_page_query_string = (object) explode("&", get_previous_page_query_string());
 
 	}
+	
+	public function InitFrontend() {
+		self::__construct();
+		$this->template->set_template('template_frontend');
+	}
 
 	public function InitBackendLogin() { 
 		self::__construct();
-		//$this->template->load_config('template-backend');
 	}
 
 	public function InitBackendSite() { 
 		self::__construct();
-		/*
-		$this->template->load_config('template-backend');
-		*/
 	}
 }
 

@@ -6,7 +6,6 @@ class Datagrid {
 	private $arrData;			// STORE DATABASE DATA ROWS
 	var $config;				// STORE CONFIGRATION
 	
-	const FORM_FIELD = 'form_field';
 	const CALLBACK = 'callback';
 	const TABLE = 'table';
 	const DIV = 'div';
@@ -26,56 +25,32 @@ class Datagrid {
 	}
 	
 	// ADD LIST OF COLUMNS TO DISPLAY IN GRID
-	public function addColumn($header_text, $db_column_name="", $form_field = FALSE){
+	public function addColumn($header_text, $db_column_name="", $field_type = FALSE){
 		$column = new stdClass();
 		$column->header_text = $header_text;
 		$column->db_column_name = $db_column_name;
-		$column->form_field = $form_field;
+		$column->field_type = $field_type;
 		$this->arrColumn[] = $column;
 	}
 	
 	// SET DATABASE DATA TO DISPLAY IN GRID
-	public function setData($model, $function){
-		$this->CI->load->model($model);
-		$this->CI->load->library('pagination');
-		$data = $this->CI->$model->$function();
-		
-		// NEED TO SET BASE URL AND PAGE NO URI SEGMENTS
-		$total_rows = $data->num_rows();
-		$config['base_url'] = base_url($this->CI->uri->segment(1).'/'.$this->CI->uri->segment(2).'/'.$this->CI->uri->segment(3));
-		$config['total_rows'] = $total_rows;
-		$config['attributes'] = array('class' => 'btn btn-default');
-		$config['per_page'] = 1;
-    	$config['use_page_numbers'] = TRUE;
-		$config['reuse_query_string'] = TRUE;
-		$config['cur_tag_open'] = '<span class="btn btn-default">';
-		$config['cur_tag_close'] = '</span>';
-		if($this->CI->uri->segment(4)){
-			$page = ($this->CI->uri->segment(4)) ;
-		}
-		else{
-			$page = 1;
-		}
-		$data = $this->CI->$model->$function('', $config['per_page']*($page-1), $config['per_page']);
-		
-		$this->CI->pagination->initialize($config);
-		
+	public function setData($data){
 		$this->arrData = $data;
 	}
 	
 	public function heading_row(){
 		$html = '';
 		if($this->config['grid_style'] == Datagrid::TABLE){
-			$htmlRowStartTag = '<thead><tr>';
-			$htmlRowEndTag = '</tr></thead>';
-			$htmlColStartTag = '<th>';
-			$htmlColEndTag = '</th>';
+			$htmlRowStartTag = '<thead><tr>'."\n";
+			$htmlRowEndTag = '</tr></thead>'."\n";
+			$htmlColStartTag = '<th>'."\n";
+			$htmlColEndTag = '</th>'."\n";
 		}
 		else{
-			$htmlRowStartTag = '<div class="row tr heading">';
-			$htmlRowEndTag = '</div>';
-			$htmlColStartTag = '<div class="colomn th">';
-			$htmlColEndTag = '</div>';
+			$htmlRowStartTag = '<div class="row tr heading">'."\n";
+			$htmlRowEndTag = '</div>'."\n";
+			$htmlColStartTag = '<div class="colomn th">'."\n";
+			$htmlColEndTag = '</div>'."\n";
 		}
 		
 		$html .= $htmlRowStartTag;
@@ -88,47 +63,56 @@ class Datagrid {
 		return $html;
 	}
 	
-	public function data_row(){
+	public function data_row($attributes=""){
 		$html = '';
 		$html .= '<tbody>';
 		// SET GRID STYLE : TABLE OR DIV
 		if($this->config['grid_style'] == Datagrid::TABLE){
-			$htmlRowStartTag = '<tr>';
-			$htmlRowEndTag = '</tr>';
-			$htmlColStartTag = '<td>';
-			$htmlColEndTag = '</td>';
+			$htmlRowStartTag = '<tr';
+			if(isset($attributes['grid_row']) && is_string($attributes['grid_row']))
+				$htmlRowStartTag .= " ".$attributes['grid_row'];
+			if(isset($attributes['grid_row']) && is_array($attributes['grid_row'])){
+				foreach($attributes['grid_row'] as $atr_n => $atr_v){
+					$htmlRowStartTag .= " ".$atr_n.'="'.$atr_v.'"';
+				}
+			}
+			$htmlRowStartTag .= '>'."\n";
+			$htmlRowEndTag = '</tr>'."\n";
+			$htmlColStartTag = '<td'."\n";
+			if(isset($attributes['grid_column']) && is_string($attributes['grid_column']))
+				$htmlColStartTag .= " ".$attributes['grid_column'];
+			if(isset($attributes['grid_column']) && is_array($attributes['grid_column'])){
+				foreach($attributes['grid_column'] as $atr_n => $atr_v){
+					$htmlColStartTag .= " ".$atr_n.'="'.$atr_v.'"';
+				}
+			}
+			$htmlColStartTag .= '>'."\n";
+			$htmlColEndTag = '</td>'."\n";
 		}
 		else{
-			$htmlRowStartTag = '<div class="row tr data">';
-			$htmlRowEndTag = '</div>';
-			$htmlColStartTag = '<div class="colomn td">';
-			$htmlColEndTag = '</div>';
+			$htmlRowStartTag = '<div class="row tr data">'."\n";
+			$htmlRowEndTag = '</div>'."\n";
+			$htmlColStartTag = '<div class="colomn td">'."\n";
+			$htmlColEndTag = '</div>'."\n";
 		}
 		// LOOPING DATABASE ROWS
-		foreach($this->arrData->result() as $row_data){
+		foreach($this->arrData as $row_data){
 			$html .= $htmlRowStartTag;
+			// LOOPING COLUMNS SET IN CONTROLLER
 			foreach($this->arrColumn as $val){
 				$html .= $htmlColStartTag;
 				
 				$db_column_name = $val->db_column_name;
-				$form_field = $val->form_field;
-				// IF FORM FIELD AND COLUMN NAME IS TO FORM FIELD OBJECT
-				if($form_field == Datagrid::FORM_FIELD && is_object($db_column_name)){
-					$field = $db_column_name;
-					if(!isset($column_name))
-						$column_name = $field->value;
-					$field->value = "";
-					if(isset($row_data->$column_name))
-						$field->value = $row_data->$column_name;
-					$html .= $this->CI->form->renderField($field);
-				}
+				$field_type = $val->field_type;
 				// IF CALLBACK AND COLUMN NAME IS TO CALLBACK FUNCTION
-				else if($form_field == Datagrid::CALLBACK && is_callable($db_column_name)){
+				if($field_type == Datagrid::CALLBACK && is_callable($db_column_name)){
 					$html .= $db_column_name($row_data);
 				}
 				// IF DATABASE COLUMN EXISTS THEN PRINT COLUMN VALUE
-				else if(isset($row_data->$db_column_name))
+				else if(is_object($row_data) && isset($row_data->$db_column_name))
 					$html .= $row_data->$db_column_name;
+				else if(is_array($row_data) && isset($row_data[$db_column_name]))
+					$html .= $row_data[$db_column_name];
 				
 				$html .= $htmlColEndTag;
 			}
@@ -138,7 +122,7 @@ class Datagrid {
 		return $html;
 	}
 	
-	public function renderGrid($attributes){
+	public function renderGrid($attributes=""){
 		$html = '';
 		if($this->config['grid_style'] == Datagrid::TABLE){
 			$htmlStartTag = '<table';
@@ -149,17 +133,27 @@ class Datagrid {
 					$htmlStartTag .= " ".$atr_n.'="'.$atr_v.'"';
 				}
 			}
-			$htmlStartTag .= '>';
-			$htmlEndTag = '</table>';
+			$htmlStartTag .= '>'."\n";
+			$htmlEndTag = '</table>'."\n";
 		}
 		else{
-			$htmlStartTag = '<div class="data-grid">';
-			$htmlEndTag = '</div>';
+			$htmlStartTag = '<div ';
+			if(isset($attributes['grid']) && is_string($attributes['grid']))
+				$htmlStartTag .= " ".$attributes['grid'];
+			if(isset($attributes['grid']) && is_array($attributes['grid'])){
+				foreach($attributes['grid'] as $atr_n => $atr_v){
+					if($atr_n == 'class')
+						$atr_v .= ' data-grid';
+					$htmlStartTag .= " ".$atr_n.'="'.$atr_v.'"';
+				}
+			}
+			$htmlStartTag .= '>'."\n";
+			$htmlEndTag = '</div>'."\n";
 		}
 		
 		$html .= $htmlStartTag;
-		$html .= $this->heading_row();
-		$html .= $this->data_row();
+		$html .= $this->heading_row($attributes);
+		$html .= $this->data_row($attributes);
 		$html .= $htmlEndTag;
 		return $html;
 	}

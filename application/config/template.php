@@ -6,27 +6,41 @@ $config['TEMPLATES'] = array('MAIN', 'BLANK', 'PRINT');
 // DEFAULT VIEW TO BE LOADED IF NO VIEW IS DEFINED DURING CALL
 $config['DEFAULT_TEMPLATE'] = 'MAIN';
 
+
 // TEMPLATE CONFIGRATIONS FOR MAIN
-$config['MAIN_VIEW_FOLDER'] = 'backend';
-$config['MAIN_TITLE_PREFIX'] = '';
-$config['MAIN_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
-$config['MAIN_META'] = array(
+$config['DEFAULT_VIEW_FOLDER'] = '';
+$config['DEFAULT_TITLE_PREFIX'] = '';
+$config['DEFAULT_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
+$config['DEFAULT_META'] = array(
 					'viewport' => 'width=device-width, initial-scale=1, maximum-scale=1'
 				);
-$config['MAIN_HEAD_LINK'] = array(
+$config['DEFAULT_HEAD_LINK'] = array(
 					'icon' => 'images/favicons/favicon.ico',
 					'apple-touch-icon' => 'images/favicons/apple-touch-icon.png'
 				);
-$config['MAIN_CSS_FILES'] = array( 
+$config['DEFAULT_CSS_FILES'] = array( 
 					base_url("assets/backend/css/bootstrap.css"), 
 					base_url("assets/backend/font-awesome/css/font-awesome.css"), 
 					base_url("assets/backend/css/style.css"),
 					base_url("assets/backend/css/style-responsive.css")
 );
-$config['MAIN_SCRIPT_FILES'] = array(
+$config['DEFAULT_SCRIPT_FILES'] = array(
 					base_url("assets/backend/js/jquery.js"),
 					base_url('assets/backend/js/jquery-1.8.3.min.js'),
-					base_url("assets/backend/js/bootstrap.min.js"),
+					base_url("assets/backend/js/bootstrap.min.js")
+);
+$config['DEFAULT_STRUCTURE'] = array(
+					'[main]'
+				);
+
+$config['DEFAULT_MINIFY_CSS'] = FALSE;
+$config['DEFAULT_MINIFY_SCRIPT'] = FALSE;
+$config['DEFAULT_COMPRESSED_FOLDER'] = 'compressed';
+
+
+// TEMPLATE CONFIGRATIONS FOR MAIN
+$config['MAIN_VIEW_FOLDER'] = 'backend';
+$config['MAIN_SCRIPT_FILES'] = array(
 					base_url("assets/backend/js/jquery.dcjqaccordion.2.7.js"),
 					base_url('assets/backend/js/jquery.scrollTo.min.js'),
 					base_url('assets/backend/js/jquery.nicescroll.js'),
@@ -43,38 +57,8 @@ $config['MAIN_STRUCTURE'] = array(
 					'template_backend/html_foot'
 				);
 
-$config['MAIN_MINIFY_CSS'] = FALSE;
-$config['MAIN_MINIFY_SCRIPT'] = FALSE;
-$config['MAIN_COMPRESSED_FOLDER'] = 'compressed';
 
 
 // TEMPLATE CONFIGRATIONS FOR BLANK
 $config['BLANK_VIEW_FOLDER'] = 'backend';
-$config['BLANK_TITLE_PREFIX'] = '';
-$config['BLANK_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
-$config['BLANK_META'] = array(
-					'viewport' => 'width=device-width, initial-scale=1, maximum-scale=1'
-				);
-$config['BLANK_HEAD_LINK'] = array(
-					'icon' => 'images/favicons/favicon.ico',
-					'apple-touch-icon' => 'images/favicons/apple-touch-icon.png'
-				);
-$config['BLANK_CSS_FILES'] = array( 
-					base_url("assets/backend/css/bootstrap.css"), 
-					base_url("assets/backend/font-awesome/css/font-awesome.css"), 
-					base_url("assets/backend/css/style.css"),
-					base_url("assets/backend/css/style-responsive.css")
-);
-$config['BLANK_SCRIPT_FILES'] = array(
-					base_url("assets/backend/js/jquery.js"),
-					base_url("assets/backend/js/bootstrap.min.js")
-);
-$config['BLANK_STRUCTURE'] = array(
-					'[main]'
-				);
-
-$config['BLANK_MINIFY_CSS'] = FALSE;
-$config['BLANK_MINIFY_SCRIPT'] = FALSE;
-$config['BLANK_COMPRESSED_FOLDER'] = 'compressed';
-
 ?>

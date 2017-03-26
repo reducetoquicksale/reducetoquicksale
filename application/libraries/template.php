@@ -2,23 +2,50 @@
 
 class Template{
 	
-	private $meta, $head_links, $css_files, $css, $script_files, $script, $views_to_load, $title;
-	private $CI, $config, $template_to_load;
+	private $meta, $head_links, $css_files, $css_files_extra, $css, $script_files, $script_files_extra=array(), $script, $views_to_load, $title;
+	private $CI, $config, $config_file_name, $template_to_load, $template_dependencies;
 	
 	function __construct(){
 		$this->CI =& get_instance();
+		$this->load_config_file();
+	}
+	
+	private function reset_variables(){
 		$this->meta = array();
 		$this->head_links = array();
 		$this->css_files = array();
+		$this->css_files_extra = array();
 		$this->css = "";
 		$this->script_files = array();
+		$this->script_files_extra = array();
 		$this->script = "";
 		$this->views_to_load = array();
 		$this->title = "";
+		$this->config_file_name = "template";
+		$this->config = array(
+				'VIEW_FOLDER' => '',
+				'TITLE_PREFIX' => '',
+				'TITLE_POSTFIX' => '',
+				'MINIFY_CSS' => '',
+				'MINIFY_SCRIPT' => '',
+				'COMPRESSED_FOLDER' => ''
+		);
+		$this->template_dependencies = array(
+				'meta' => 'META',
+				'head_links' => 'HEAD_LINK',
+				'css_files' => 'CSS_FILES',
+				'script_files' => 'SCRIPT_FILES'
+		);
 	}
 	
-	private function load_config(){
-		$config_file = 'template';
+	public function load_config_file($new_config_file = ""){
+		$this->reset_variables();
+		
+		if(is_string($new_config_file) && trim($new_config_file) != "")
+			$this->config_file_name = trim($new_config_file);
+		
+		$config_file = $this->config_file_name;
+		// CHECK IF CONFIG FILE EXIST AND LOAD CONFIG FILE
 		if ( file_exists( APPPATH.'config/'.$config_file ) ){
 			$config_file = $config_file;
 		} else if ( file_exists( APPPATH.'config/'.$config_file.'.php' ) ){
@@ -33,6 +60,27 @@ class Template{
 			show_error('Unable to load the config file: ' . 'config/'.$config_file.'.php');
 		}
 		
+		// LOAD DEFAULT/COMMON CONFIGRATIONS
+		foreach($this->config as $index=>$val){
+			$new_val = $this->CI->config->item('DEFAULT_'.$index);
+			if($new_val != "")
+				$this->config[$index] = $new_val;
+		}
+		
+		// LOAD DEFAULT/COMMON TEMPLATE DEPENDENCIES
+		foreach($this->template_dependencies as $var_name=>$config_item){
+			$new_val = $this->CI->config->item('DEFAULT_'.$config_item);
+			if(is_array($new_val))
+				$this->$var_name = $new_val;
+		}
+		
+		// SET A DEFAULT TEMPLATE STRUCTURE
+		$STRUCTURE = $this->CI->config->item('DEFAULT_STRUCTURE');
+		if(is_array($STRUCTURE))
+			$this->set($STRUCTURE);
+	}
+	
+	private function load_template_dependencies(){
 		$templates_available = $this->CI->config->item('TEMPLATES');
 		if($this->template_to_load != ""){
 			if(in_array($this->template_to_load, $templates_available)){
@@ -45,25 +93,20 @@ class Template{
 		else
 			$loaded_template = $this->CI->config->item('DEFAULT_TEMPLATE');
 		
-		$this->config['VIEW_FOLDER'] =  $this->CI->config->item($loaded_template.'_VIEW_FOLDER');
-		$this->config['TITLE_PREFIX'] =  $this->CI->config->item($loaded_template.'_TITLE_PREFIX');
-		$this->config['TITLE_POSTFIX'] =  $this->CI->config->item($loaded_template.'_TITLE_POSTFIX');
-		$this->config['MINIFY_CSS'] =  $this->CI->config->item($loaded_template.'_MINIFY_CSS');
-		$this->config['MINIFY_SCRIPT'] =  $this->CI->config->item($loaded_template.'_MINIFY_SCRIPT');
-		$this->config['COMPRESSED_FOLDER'] =  $this->CI->config->item($loaded_template.'_COMPRESSED_FOLDER');
+		// LOAD DEFAULT/COMMON CONFIGRATIONS
+		foreach($this->config as $index=>$val){
+			$new_val = $this->CI->config->item($loaded_template.'_'.$index);
+			if($new_val != "")
+				$this->config[$index] = $new_val;
+		}
 		
-		$META = $this->CI->config->item($loaded_template.'_META');
-		if(is_array($META))
-			$this->meta = array_merge($META, $this->meta);
-		$HEAD_LINK = $this->CI->config->item($loaded_template.'_HEAD_LINK');
-		if(is_array($HEAD_LINK))
-			$this->head_links = array_merge($HEAD_LINK, $this->head_links);
-		$CSS_FILES = $this->CI->config->item($loaded_template.'_CSS_FILES');
-		if(is_array($CSS_FILES))
-			$this->css_files = array_merge($CSS_FILES, $this->css_files);
-		$SCRIPT_FILES = $this->CI->config->item($loaded_template.'_SCRIPT_FILES');
-		if(is_array($SCRIPT_FILES))
-			$this->script_files = array_merge($SCRIPT_FILES, $this->script_files);
+		// LOAD DEFAULT/COMMON TEMPLATE DEPENDENCIES
+		foreach($this->template_dependencies as $var_name=>$config_item){
+			$new_val = $this->CI->config->item($loaded_template.'_'.$config_item);
+			if(is_array($new_val))
+				$this->$var_name = array_merge($this->$var_name, $new_val);
+		}
+	
 		$STRUCTURE = $this->CI->config->item($loaded_template.'_STRUCTURE');
 		if(is_array($STRUCTURE))
 			$this->set($STRUCTURE);
@@ -89,7 +132,7 @@ class Template{
 	
 	public function add_css($href){
 		if(is_array($href)){
-			$this->css_files = array_merge($this->css_files, $href);
+			$this->css_files_extra = array_merge($this->css_files_extra, $href);
 		}
 		else{
 			$this->css .= $href."\n";
@@ -98,7 +141,7 @@ class Template{
 	
 	public function add_script($src){
 		if(is_array($src)){
-			$this->script_files = array_merge($this->script_files, $src);
+			$this->script_files_extra = array_merge($this->script_files_extra, $src);
 		}
 		else{
 			$this->script .= $src."\n";
@@ -110,12 +153,10 @@ class Template{
 	}
 	
 	public function set($views){
-		if(is_array($views)){
-			$this->views_to_load = array_merge($this->views_to_load, $views);
-		}
-		else{
-			$this->views_to_load = array($name => $content);
-		}
+		if(is_array($views))
+			$this->views_to_load = $views;
+		else
+			show_error('Template structure should be an array of views to display');
 	}
 	
 	public function render_meta(){
@@ -168,6 +209,11 @@ class Template{
 		$html_head .= '<title>'.$this->config['TITLE_PREFIX'].$this->title.$this->config['TITLE_POSTFIX'].'</title>'."\n";
 		$html_head .= $this->render_head_link();
 		$html_head .= $this->render_css();
+		$html_head .= '<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'."\n";
+		$html_head .= '<!--[if lt IE 9]>'."\n";
+		$html_head .= '<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>'."\n";
+		$html_head .= '<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>'."\n";
+		$html_head .= '<![endif]-->'."\n";	
 		$html_head .= '</head>'."\n";
 		return $html_head;
 	}
@@ -178,25 +224,37 @@ class Template{
 		return $html_head;
 	}
 	
-	public function load($view_name="", $main_data=array(), $template_to_load=""){
+	private function merge_css_script(){
+		$this->css_files = array_merge($this->css_files, $this->css_files_extra);
+		$this->css_files = array_unique($this->css_files);
+		$this->script_files = array_merge($this->script_files, $this->script_files_extra);
+		$this->script_files = array_unique($this->script_files);
+		unset($this->css_files_extra, $this->script_files_extra);
+	}
+	
+	public function set_template($template_to_load=""){
 		if(is_string($template_to_load) && trim($template_to_load) != "")
 			$this->template_to_load = strtoupper(trim($template_to_load));
-			
-		$this->load_config();
+	}
+	
+	public function load($view_name="", $main_data=array(), $template_to_load=""){
+		$this->set_template($template_to_load);
+		$this->load_template_dependencies();
 		
 		$html2 = "";
 		
 		$index = array_search('[main]', $this->views_to_load);
 		if($view_name != ""){
-			$this->views_to_load[$index] = $this->config['VIEW_FOLDER'].'/'.$view_name;
+			$this->views_to_load[$index] = $view_name;
 		}
 		else
 			unset($this->views_to_load[$index]);
 		
 		foreach($this->views_to_load as $view){
-			$html2 .= $this->CI->load->view($view, $main_data, TRUE);
+			$html2 .= $this->CI->load->view($this->config['VIEW_FOLDER'].'/'.$view, $main_data, TRUE);
 		}
 		
+		$this->merge_css_script();
 		$html = $this->render_head_html();
 		$html .= $html2;
 		$html .= "\n".$this->render_foot_html();

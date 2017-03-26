@@ -38,7 +38,14 @@
 		$CI = &get_instance();
 		$CI->load->library("session");
 		$user = unserialize($CI->session->userdata(ProjectENUM::USER_SESSION_NAME));
-		if($user == null) { $user = new DBUser(); }
+		//print_r($user);
+		//exit();
+		if($user == null){
+			$user = new stdClass();
+			$user->is_super = 0;
+			$user->role_id = UserType::ANNONYMOUS;
+			$user->ref_type = UserRole::ANNONYMOUS;
+		}
 		return $user;
 	}
 

@@ -1,14 +1,24 @@
-<?php $this->template->add_script('
+<?php
+$src = '
 	$.backstretch("'.base_url("assets/backend/img/login-bg.jpg").'", {speed: 500});
-') ?>	
+';
+$this->template->add_script($src);
+$this->template->add_script(array(base_url("assets/backend/js/jquery.backstretch.min.js")));
+?>	
 <body>
 	<div id="login-page">
 	  	<div class="container">	  	
 		      <form class="form-login" action="" method="post">
 		        <h2 class="form-login-heading">sign in now</h2>
-		        <?php get_message(); ?>
+		        <?php render_error_success_msg(); ?>
 				<div class="login-wrap">
-                <?php echo $this->form->renderForm(); ?>
+                <?php //echo $this->form->renderForm(); ?>
+                <div class="user_name_wrapper field_wrapper">
+                <?php echo $this->form->renderField(dbUser::LOGIN_ID); ?>
+                </div>
+                <div class="password_wrapper field_wrapper">
+                <?php echo $this->form->renderField(dbUser::PASSWORD); ?>
+                </div>
 		            <label class="checkbox">
 		                <span class="pull-right"><a data-toggle="modal" href="login.html#myModal"> Forgot Password?</a></span>
 		            </label>

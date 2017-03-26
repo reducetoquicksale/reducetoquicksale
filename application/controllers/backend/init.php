@@ -9,47 +9,33 @@ class Init extends MY_Controller {
 	
 	public function login() {
 		$this->load->library('form');
-		$objUser = new DBUser();
-		$objUser->user_name = "";
-		$objUser->password = "";	
-
-		if($_POST != null) {
-			$objUser->user_name		= $_POST["user_name"];
-			$objUser->password		= $_POST["password"];
-			$return_url				= $_POST["return_url"];
-
-			//$this->form_validation->set_rules('user_name', 'Login Id', 'required');
-			//$this->form_validation->set_rules('password', 'Password', 'required');
-			
-			if($this->form->validateForm()) { 
-				$objUser = $this->m_user->authenticate($objUser);
-				if($objUser != null) {	
-					$this->session->set_userdata(ProjectENUM::USER_SESSION_NAME, serialize($objUser));					
-					if($return_url != "")
-						redirect($return_url);
-					else
-						redirect(URL::BACKEND . "/dashboard");
-				} else {
-					set_message($this->m_user->error_message, MessageType::ERROR);
-				}
-			}
-		}
-		
-		//$this->form->config(array('template_path'=>'backend/form_template'));
 		
 		$field = new stdClass();
 		$field->type = Form::TEXT;
-		$field->name = "user_name";
+		$field->name = dbUser::LOGIN_ID;
+		$field->label = "User ID";
 		$field->attributes = array(
 							"placeholder" => "User ID",
 							"class" => "form-control"
 						);
-		$field->validation = "required";
+		if($_POST != NULL && $_POST[dbUser::LOGIN_ID] != "" && $_POST[dbUser::PASSWORD] != "" ){
+			$this->form_validation->set_rules(dbUser::LOGIN_ID, 'User ID', 
+												array(
+													'required',
+													array('authenticate2', array($this->m_user, 'authentication'))
+												)
+											);
+			$this->form_validation->set_message('authenticate2', 'Username of Password not correct');
+		}
+		else {
+			$field->validation = "required";
+		}
 		$this->form->addFormField($field);
 		
 		$field = new stdClass();
 		$field->type = Form::PASSWORD;
-		$field->name = "password";
+		$field->name = dbUser::PASSWORD;
+		$field->label = "Password";
 		$field->attributes = array(
 							"placeholder" => "Password",
 							"class" => "form-control"
@@ -62,11 +48,20 @@ class Init extends MY_Controller {
 		$field->name = "return_url";
 		$this->form->addFormField($field);
 
-		//$data["arrField"]			 = array("user_name" => $field_user_name, "password" => $field_password, "return_url" => $field_return_url);
-		$data['title']				 = 'Login';
+		if($_POST != NULL) {
+			if($this->form->validateForm()){
+				redirect(base_url(URL::BACKEND . "/dashboard"));
+			}
+		}
 		
-		$this->template->add_script(array(base_url("assets/backend/js/jquery.backstretch.min.js")));
-		$this->template->load('login', $data, 'blank');
+		//$this->form->config(array('template_path'=>'backend/form_template'));
+		$this->template->set_title('Login');
+		$this->template->load('login', '', 'blank');
+	}
+
+	public function dashboard() {
+		$this->template->set_title('Dashboard');
+		$this->template->load('');
 	}
 
 	public function logout() {
