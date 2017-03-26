@@ -3,13 +3,20 @@
 class Init extends MY_Controller {
 
 	public function Init() {
-		parent::__construct();
 		$this->InitFrontend();
-		$this->load->model('m_user');
+		//$this->load->model('m_user');
 	}
 
 	public function homepage(){
-		
+		$a = array(
+				'template/html_head',
+				'template/main_content_area',
+				'[main]',
+				'template/html_foot'
+		);
+		//$this->template->set_structure($a);
+		$this->template->set_title('Dashboard');
+		$this->template->load('homepage');
 	}
 }
 

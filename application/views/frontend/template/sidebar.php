@@ -58,7 +58,7 @@
 
 	$submenu = array();
 	$submenu[] = new SideBarItem("Add Actions", UserAction::ADDACTION, backendUrl("action/add"));
-	$submenu[] = new SideBarItem("Manage Actions", UserAction::LISTACTION, backendUrl("action/pagedList"));
+	$submenu[] = new SideBarItem("Manage Actions", UserAction::LISTACTION, backendUrl("action/manage"));
 	$arrSideBarItem[] = new SideBarItem("Actions", UserAction::NONE, "javascript:;", $submenu);
 
 	$submenu = array();
@@ -67,8 +67,8 @@
 	$arrSideBarItem[] = new SideBarItem("Roles", UserAction::NONE, "javascript:;", $submenu);
 
 	$submenu = array();
-	$submenu[] = new SideBarItem("Add User", UserAction::DASHBOARD, base_url('backend/user/add'));
-	$submenu[] = new SideBarItem("Manage User", UserAction::DASHBOARD, base_url('backend/user/manage'));
+	$submenu[] = new SideBarItem("Add User", UserAction::DASHBOARD, backendUrl('user/add'));
+	$submenu[] = new SideBarItem("Manage User", UserAction::DASHBOARD, backendUrl('user/manage'));
 	$arrSideBarItem[] = new SideBarItem("User", UserAction::NONE, "javascript:;", $submenu);
 ?>
 

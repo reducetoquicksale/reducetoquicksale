@@ -8,7 +8,7 @@ $config['DEFAULT_TEMPLATE'] = 'MAIN';
 
 
 // TEMPLATE CONFIGRATIONS FOR MAIN
-$config['DEFAULT_VIEW_FOLDER'] = '';
+$config['DEFAULT_VIEW_FOLDER'] = 'frontend';
 $config['DEFAULT_TITLE_PREFIX'] = '';
 $config['DEFAULT_TITLE_POSTFIX'] = ' | '.ProjectENUM::APPLICATION_TITLE;
 $config['DEFAULT_META'] = array(
@@ -19,15 +19,13 @@ $config['DEFAULT_HEAD_LINK'] = array(
 					'apple-touch-icon' => 'images/favicons/apple-touch-icon.png'
 				);
 $config['DEFAULT_CSS_FILES'] = array( 
-					base_url("assets/backend/css/bootstrap.css"), 
-					base_url("assets/backend/font-awesome/css/font-awesome.css"), 
-					base_url("assets/backend/css/style.css"),
-					base_url("assets/backend/css/style-responsive.css")
+					base_url("assets/css/bootstrap.css"), 
+					base_url("assets/font-awesome/css/font-awesome.css"), 
+					base_url("assets/css/style.css")
 );
 $config['DEFAULT_SCRIPT_FILES'] = array(
-					base_url("assets/backend/js/jquery.js"),
-					base_url('assets/backend/js/jquery-1.8.3.min.js'),
-					base_url("assets/backend/js/bootstrap.min.js")
+					base_url("assets/js/jquery.min.js"),
+					base_url("assets/js/bootstrap.min.js")
 );
 $config['DEFAULT_STRUCTURE'] = array(
 					'[main]'
@@ -39,26 +37,32 @@ $config['DEFAULT_COMPRESSED_FOLDER'] = 'compressed';
 
 
 // TEMPLATE CONFIGRATIONS FOR MAIN
-$config['MAIN_VIEW_FOLDER'] = 'backend';
+$config['MAIN_CSS_FILES'] = array(
+		base_url("assets/css/flaticon.css"),
+		base_url('assets/css/et-line-fonts.css'),
+		base_url('assets/css/forest-menu.css'),
+		base_url('assets/css/animate.min.css'),
+		base_url('assets/css/select2.min.css'),
+		base_url('assets/css/responsive-media.css'),
+		base_url('assets/css/colors/defualt.css')
+);
 $config['MAIN_SCRIPT_FILES'] = array(
-					base_url("assets/backend/js/jquery.dcjqaccordion.2.7.js"),
-					base_url('assets/backend/js/jquery.scrollTo.min.js'),
-					base_url('assets/backend/js/jquery.nicescroll.js'),
-					base_url('assets/backend/js/jquery.sparkline.js'),
-					base_url('assets/backend/js/common-scripts.js'),
-					base_url('assets/backend/js/gritter/js/jquery.gritter.js'),
-					base_url('assets/backend/js/gritter-conf.js'),
-					base_url('assets/backend/js/sparkline-chart.js'),
-					base_url('assets/backend/js/zabuto_calendar.js')
+					base_url("assets/js/easing.js"),
+					base_url('assets/js/forest-megamenu.js'),
+					base_url('assets/js/jquery.appear.min.js'),
+					base_url('assets/js/jquery.smoothscroll.js'),
+					base_url('assets/js/select2.min.js'),
+					base_url('assets/js/custom.js')
 );
 $config['MAIN_STRUCTURE'] = array(
-					'template_backend/html_head',
-					'[main]',
-					'template_backend/html_foot'
-				);
+		'template/html_head',
+		'common/homepage_banner',
+		'template/main_content_area',
+		'[main]',
+		'template/html_foot'
+	);
 
 
 
 // TEMPLATE CONFIGRATIONS FOR BLANK
-$config['BLANK_VIEW_FOLDER'] = 'backend';
 ?>

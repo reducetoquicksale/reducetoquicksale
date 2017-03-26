@@ -52,9 +52,9 @@ $config['MAIN_SCRIPT_FILES'] = array(
 					base_url('assets/backend/js/zabuto_calendar.js')
 );
 $config['MAIN_STRUCTURE'] = array(
-					'template_backend/html_head',
+					'template/html_head',
 					'[main]',
-					'template_backend/html_foot'
+					'template/html_foot'
 				);
 
 
