@@ -160,13 +160,17 @@
 
 	function get_previous_page_query_string() {
 		$CI = & get_instance();
-		$url = $CI->agent->is_referral() ? $CI->agent->referrer() : "";
+		$url = $CI->agent->referrer();
 		$url = explode("?",$url);
 		if(count($url) > 1) {
 			return $url[1];
 		} else {
 			return "";
 		}
+	}
+
+	function get_previous_page_url() {
+		return $this->agent->referrer();
 	}
 
 	function get_current_page_query_string($filter = NULL) {
@@ -250,7 +254,7 @@
 	function arrayToClassObj($classObj, Array $array) {
 		$class_vars = get_class_vars(get_class($classObj));
 		foreach ($class_vars as $name => $value) {
-			$classObj->$name = $array[$name];
+			$classObj->$name = isset($array[$name]) ? $array[$name] : null;
 		}
 		return $classObj;
 	}
@@ -258,14 +262,14 @@
 	function objectToClassArray($classObj, Object $array) {
 		$class_vars = get_class_vars(get_class($classObj));
 		foreach ($class_vars as $name => $value) {
-			$classObj[$name] = $array->$name;
+			$classObj[$name] = isset($array->$name) ? $array->$name : null;
 		}
 		return $classObj;
 	}
 
 	function arrayToObject($data)	{
-		if (is_array($data) || is_object($data)) {
-			$result = array();
+		if (is_array($data)) {
+			$result = new stdClass();
 			foreach ($data as $key => $value) {
 				$result->$key = arrayToObject($value);
 			}
@@ -285,8 +289,20 @@
 		return $data;
 	}
 
+	function emptyDBClassArray($className) {
+		$refl = new ReflectionClass($className);
+		$constants = $refl->getConstants();
+		$temp = array();
+		foreach($constants as $key){
+			$temp[$key] = "";
+		}
+		return $temp;
+	}
+
 	function backendUrl($url) {
-		return base_url(URL::BACKEND ."/". $url);
+		if(!empty($url)) {
+			return base_url(URL::BACKEND ."/". $url);
+		}
 	}
 
 	function custom_validation_errors(){
@@ -313,5 +329,17 @@ function render_error_success_msg(){
 		echo '<div class="alert alert-danger">';
 		echo custom_validation_errors();
 		echo '</div>';
+	}
+}
+
+function gridEdit($url) {
+	if(!empty($url)) {
+		return ' <a class="btn btn-success btn-xs" href="'.$url.'" title="Edit"><i class="fa fa-pencil "></i></a>';
+	}
+}
+
+function gridDelete($id) {
+	if(!empty($id)) {
+		return ' <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id="'.$id.'"><span data-href="action/delete"><i class="fa fa-trash-o "></i></span></button>';
 	}
 }

@@ -10,7 +10,7 @@ class Init extends MY_Controller {
 	public function login() {
 		$this->load->library('form');
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbUser::LOGIN_ID;
 		$field->label = "User ID";
@@ -18,21 +18,12 @@ class Init extends MY_Controller {
 							"placeholder" => "User ID",
 							"class" => "form-control"
 						);
-		if($_POST != NULL && $_POST[dbUser::LOGIN_ID] != "" && $_POST[dbUser::PASSWORD] != "" ){
-			$this->form_validation->set_rules(dbUser::LOGIN_ID, 'User ID', 
-												array(
-													'required',
-													array('authenticate2', array($this->m_user, 'authentication'))
-												)
-											);
-			$this->form_validation->set_message('authenticate2', 'Username of Password not correct');
-		}
-		else {
-			$field->validation = "required";
-		}
+
+		$field->validation = array("required", array('authenticate', array($this->m_user, 'authentication')));
+		$this->form_validation->set_message('authenticate', 'Username of Password not correct');
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::PASSWORD;
 		$field->name = dbUser::PASSWORD;
 		$field->label = "Password";
@@ -43,7 +34,7 @@ class Init extends MY_Controller {
 		$field->validation = "required";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::HIDDEN;
 		$field->name = "return_url";
 		$this->form->addFormField($field);
@@ -72,6 +63,10 @@ class Init extends MY_Controller {
 	public function help() {
 		$data["title"] = "Help";
 		$this->template->load('help', $data, TPLFile::BLANK);
+	}
+
+	public function authentication() {
+		return $this->m_user->authentication();
 	}
 }
 

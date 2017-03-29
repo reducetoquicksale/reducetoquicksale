@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2017 at 08:48 AM
+-- Generation Time: Mar 29, 2017 at 09:54 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -31,7 +31,12 @@ CREATE TABLE IF NOT EXISTS `action` (
   `action_name` varchar(56) NOT NULL,
   `controller` varchar(56) NOT NULL,
   `function` varchar(56) NOT NULL,
-  `module` int(2) NOT NULL,
+  `ui_id` int(2) NOT NULL,
+  `added_by` int(11) NOT NULL,
+  `add_timestamp` int(11) NOT NULL,
+  `updated_by` int(11) NOT NULL,
+  `update_timestamp` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
   PRIMARY KEY (`action_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -39,10 +44,19 @@ CREATE TABLE IF NOT EXISTS `action` (
 -- Dumping data for table `action`
 --
 
-INSERT INTO `action` (`action_id`, `action_name`, `controller`, `function`, `module`) VALUES
-(3301, 'Login', 'init', 'login', 1),
-(3302, 'Sing Up', 'init', 'signup', 1),
-(3303, 'Dashboard', 'dashboard', 'index', 1);
+INSERT INTO `action` (`action_id`, `action_name`, `controller`, `function`, `ui_id`, `added_by`, `add_timestamp`, `updated_by`, `update_timestamp`, `status`) VALUES
+(3301, 'Login', 'init', 'login', 0, 0, 0, 1, 1490606210, 0),
+(3302, 'Sing Up', 'init', 'signup', 1, 0, 0, 1, 1490613725, 0),
+(3303, 'Dashboard', 'dashboard', 'index', 1, 0, 0, 0, 0, 0),
+(3304, 'Logout', 'init', 'logout', 1, 0, 0, 0, 0, 0),
+(3401, 'Add Action', 'action', 'add', 1, 0, 0, 0, 0, 0),
+(3402, 'Edit Action', 'action', 'edit', 1, 0, 0, 0, 0, 0),
+(3403, 'Manage Actions', 'action', 'manage', 1, 0, 0, 0, 0, 0),
+(3404, 'Delete Action', 'action', 'delete', 1, 0, 0, 0, 0, 0),
+(3501, 'Add Role', 'role', 'add', 1, 1, 1490614234, 0, 0, 0),
+(3502, 'Edit Role', 'role', 'edit', 1, 1, 1490614426, 1, 1490615448, 0),
+(3503, 'Manage Role', 'role', 'manage', 1, 1, 1490614779, 0, 0, 0),
+(3504, 'Delete Role', 'Role', 'delete', 1, 1, 1490614867, 1, 1490615458, 0);
 
 -- --------------------------------------------------------
 
@@ -117,8 +131,9 @@ CREATE TABLE IF NOT EXISTS `role_action_mapping` (
 
 INSERT INTO `role_action_mapping` (`role_id`, `action_id`) VALUES
 (3, 3301),
-(3, 3302),
-(1, 3303);
+(1, 3303),
+(1, 3304),
+(3, 3302);
 
 -- --------------------------------------------------------
 
@@ -149,8 +164,29 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`id`, `user_name`, `email`, `password`, `ref_type`, `role_id`, `last_login_timestamp`, `status`, `is_super`, `added_by`, `add_timestamp`, `updated_by`, `update_timestamp`) VALUES
-(1, 'admin', 'aman@duzies.com', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 1, 0, 1, 0, 1, 1363237200, 0, 0),
+(1, 'admin', 'aman@duzies.com', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 1, 0, 1, 1, 1, 1363237200, 1, 1490613587),
 (2, 'user', 'user@def.com', 'd033e22ae348aeb5660fc2140aec35850c4da997', 2, 2, 1484817788, 1, 1, 1, 1363237200, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userinterface`
+--
+
+CREATE TABLE IF NOT EXISTS `userinterface` (
+  `ui_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(10) NOT NULL,
+  `url` varchar(10) NOT NULL,
+  PRIMARY KEY (`ui_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `userinterface`
+--
+
+INSERT INTO `userinterface` (`ui_id`, `name`, `url`) VALUES
+(1, 'Backend', 'backend'),
+(2, 'Frontend', 'frontend');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -30,7 +30,7 @@ class User extends MY_Controller {
 		$this->load->library('form');
 		$this->form->config(array('template_path'=>'backend/form_template'));
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbUser::LOGIN_ID;
 		$field->label = "User Name";
@@ -44,7 +44,7 @@ class User extends MY_Controller {
 		$this->form->addFormField($field);
 		
 		if(!$edit_call){
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::PASSWORD;
 		$field->name = dbUser::PASSWORD;
 		$field->label = "Password";
@@ -52,7 +52,7 @@ class User extends MY_Controller {
 		$this->form->addFormField($field);
 		}
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbUser::EMAIL;
 		$field->label = "Email";
@@ -62,7 +62,7 @@ class User extends MY_Controller {
 		$field->validation = "required|valid_email";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::RADIO;
 		$field->name = dbUser::REFERENCE_TYPE;
 		$field->label = "Reference Type";
@@ -79,7 +79,7 @@ class User extends MY_Controller {
 			$roles[$row[dbRole::ID]] = $row[dbRole::NAME];
 		}
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::SELECT;
 		$field->name = dbUser::ROLE_ID;
 		$field->label = "Select Role";
@@ -89,7 +89,7 @@ class User extends MY_Controller {
 		}
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::RADIO;
 		$field->name = dbUser::STATUS;
 		$field->label = "Status";
@@ -100,7 +100,7 @@ class User extends MY_Controller {
 		}
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::SUBMIT;
 		$field->name = "save";
 		$field->value = "Add User";
@@ -137,12 +137,11 @@ class User extends MY_Controller {
 	}
 
 	public function manage() {
-		validateUserAccess($this, true);
 		$this->load->library('form');
 		$this->load->library("datagrid");
 		$this->load->model("m_user");
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::CHECKBOX;
 		$field->name = "user_id";
 		$field->value = array(1=>"");
@@ -151,7 +150,7 @@ class User extends MY_Controller {
 		$label1 = $this->form->renderField($field);
 		
 		$this->datagrid->addColumn($label1, function($row){
-				$field = new stdClass();
+				$field = new FormField();
 				$field->type = Form::CHECKBOX;
 				$field->name = "user_id[]";
 				$field->value = array($row[dbUser::ID]=>"");
@@ -178,12 +177,15 @@ class User extends MY_Controller {
 			}, Datagrid::CALLBACK);
 		$this->datagrid->addColumn("Email", "email");
 		$this->datagrid->addColumn("Actions", function($row){
-				$html = "";
+				$html = gridEdit(backendUrl('user/edit/'.$row[dbUser::ID]));
+				$html .= $row[dbUser::IS_SUPER] != 1 ? gridDelete($row[dbUser::ID]) : ""; 
+				return $html;
+				/*$html = "";
 				$html .= ' <a class="btn btn-success btn-xs" href="'.backendUrl('user/edit/'.$row[dbUser::ID]).'" title="Edit"><i class="fa fa-pencil "></i></a>';
 				if($row[dbUser::IS_SUPER] != 1){
 					$html .= ' <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id="'.$row[dbUser::ID].'"><i class="fa fa-trash-o "></i></button>';
 				}
-				return $html;
+				return $html;*/
 			}, Datagrid::CALLBACK);
 		
 		$total_rows = $this->m_user->count_rows();
@@ -216,16 +218,12 @@ class User extends MY_Controller {
 	}
 
 	public function view() {
-		validateUserAccess($this, true);
-		
 		$data['title'] = 'User Detail';
 		$data['module'] = 'user';
 		$this->template->load('user/view_user', $data);
 	}
 
 	public function status($id, $status) {
-		validateUserAccess($this, true);
-		
 		$id = (int) $id;
 		$_POST[dbUser::STATUS] = (int) $status;
 		if($this->m_user->update($id))
@@ -236,8 +234,6 @@ class User extends MY_Controller {
 	}
 
 	public function delete($id) {
-		validateUserAccess($this, true);
-		
 		$id = (int) $id;
 		if($this->m_user->delete($id))
 			set_message('success', 'success');

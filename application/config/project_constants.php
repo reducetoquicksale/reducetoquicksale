@@ -33,6 +33,14 @@ abstract class ProjectENUM {
     const USER_SESSION_NAME = "ReduceToQuickSale";
     const CURRENCY_SIGN = "$";
     const ROWS_TO_SHOW = 10;
+	const RETURN_URL = "return_url";
+}
+
+/**************** User Interface ENUMS *************************/
+
+abstract class UI {
+    const BACKEND = 1;
+    const FRONTEND = 2;
 }
 
 /**************** Messages Type ENUMS *************************/
@@ -71,12 +79,12 @@ abstract class UserAction {
 	const LOGOUT	= 3304;
 
 	const ADDACTION		= 3401;
-	const EDITACTION	= 3403;
+	const EDITACTION	= 3402;
 	const LISTACTION	= 3403;
 	const DELACTION		= 3404;
 
 	const ADDROLE		= 3501;
-	const EDITROLE		= 3503;
+	const EDITROLE		= 3502;
 	const LISTROLE		= 3503;
 	const DELROLE		= 3504;
 }
@@ -85,9 +93,4 @@ abstract class UserAction {
 
 abstract class URL {
 	const BACKEND = "backend";
-}
-
-abstract class MODULE {
-	const BACKEND = 1;
-	const FRONTEND = 2;
 }

@@ -8,9 +8,9 @@ class M_Action extends CI_Model
 		$u_id = dbUser::ID;
 		$_POST[dbAction::ADD_TIME] = time();
 		$_POST[dbAction::ADDED_BY_USER] = $user->$u_id;
-		$user_id = $this->base_model->add('dbAction');
-		if($user_id != FALSE){
-			return $user_id;
+		$action_id = $this->base_model->add('dbAction');
+		if($action_id != FALSE) {
+			return $action_id;
 		}
 		else
 			return FALSE;
@@ -28,13 +28,22 @@ class M_Action extends CI_Model
 	}
 	
 	public function get_rows($where="", $limit="", $start=""){
-		//$result = $this->base_model->get_dataset('dbAction', $where, $limit, $start);
-		//$result = $this->base_model->get_data_object('dbAction', $where, $limit, $start);
 		$result = $this->base_model->get_data_array('dbAction', $where, $limit, $start);
 		return $result;
 	}
+
+	public function get_detail($where = ""){
+		
+		$result = $this->base_model->get_data_array('dbAction', $where);
+		
+		if(!empty($result)) {
+			return $result[0];
+		} else {
+			return null;
+		}
+	}
 	
-	public function count_rows($where=""){
+	public function count_rows($where = ""){
 		$result = $this->base_model->get_dataset('dbAction', $where);
 		$total_rows = $result->num_rows();
 		return $total_rows;

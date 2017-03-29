@@ -60,17 +60,14 @@
 		}
 	}*/
 
-	function validateUserAccess($obj, $show_access_denied = false){
-		
-		$oUser = getLoggedUser();
-		
+	function validateUserAccess($obj, $show_access_denied = false) {		
+		$oUser = getLoggedUser();		
 		if($oUser->is_super == 1) {
 			$flag = TRUE;
 			return $flag;
 		}
 
 		$action_id = UserAction::NONE;
-
 		if(!file_exists(DOCUMENT_ROOT."roles/actions.php")) { createActionFile(); }
 		include_once(DOCUMENT_ROOT."roles/actions.php");
 
@@ -90,19 +87,26 @@
 	}
 
 	function validateAction($action_id) {
-		$flag = FALSE;
-		$oUser = getLoggedUser();
+		$flag = FALSE;		
 		
+		$oUser = getLoggedUser();	
+		if(!file_exists(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php")) { 
+			createActionFile();
+			createRoleFiles(); 
+		}
+		include_once(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php");
+		global $ROLE_ACTION;
+			
 		if($oUser->is_super == 1) {
 			$flag = TRUE;
 			return $flag;
+		} else {
+			foreach ($ROLE_ACTION as $role) { 
+				if(in_array($action_id, $role)) { 
+					$flag = TRUE; 
+				} 
+			}
 		}
-
-		if(!file_exists(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php")) { createRoleFiles(); }
-		include_once(DOCUMENT_ROOT."roles/role_".$oUser->role_id.".php");
-
-		global $ROLE_ACTION;
-		foreach ($ROLE_ACTION as $role) { if(in_array($action_id, $role)) { $flag = TRUE; } }
 		return $flag;
 	}
 
@@ -116,6 +120,15 @@
 				}
 			}
 		}
+	}
+
+	function getActionUrlWithID($action_id, $id) {
+		$url = getActionUrl($action_id);
+		if(!empty($url)) {
+			$url .= "/".$id;
+			return $url;
+		}
+		
 	}
 
 	function createRoleFiles($role_id = 0) {
@@ -132,16 +145,16 @@
 		$arrActions = $CI->m_role->getActions();
 		if(count($arrRoles) > 0) {
 			foreach($arrRoles as $role) {
-				$CI->m_role->role_id = $role["role_id"];
+				$CI->m_role->role_id = $role->role_id;
 				$roleActions = $CI->m_role->getRoleActions();			 
 				$file_content = array();
 				$file_content[] = "<?php \n global ".'$ROLE_ACTION;'." \n".'$ROLE_ACTION'." = array(); \n";
 				if(count($arrActions) > 0) {					
 					foreach($arrActions as $action) {
-						$action["controller"] = strtolower($action["controller"]);
-						$action["function"] = strtolower($action["function"]);
-						if(isset($roleActions[$action["action_id"]])) {
-							$file_content[] = '$ROLE_ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = '.$action["action_id"].';'."\n";
+						$action->controller = strtolower($action->controller);
+						$action->function = strtolower($action->function);
+						if(isset($roleActions[$action->action_id])) {
+							$file_content[] = '$ROLE_ACTION["'.$action->controller.'"]["'.$action->function.'"] = '.$action->action_id.';'."\n";
 						}
 					}					
 				}
@@ -151,7 +164,7 @@
 
 				$file_path = DOCUMENT_ROOT."roles"; 
 				if(!is_dir($file_path)) { mkdir($file_path,0755,TRUE); }
-				file_put_contents($file_path."/role_".$role["role_id"].".php", $file_content);
+				file_put_contents($file_path."/role_".$role->role_id.".php", $file_content);
 			}
 		}
 	}
@@ -164,7 +177,7 @@
 		$file_content[] = "<?php \n global ".'$ACTION;'." \n";
 		if(count($arrActions) > 0) {			
 			foreach($arrActions as $action) {
-				$file_content[] = '$ACTION["'.$action["controller"].'"]["'.$action["function"].'"] = '.$action["action_id"].';'."\n";
+				$file_content[] = '$ACTION["'.$action->controller.'"]["'.$action->function.'"] = '.$action->action_id.';'."\n";
 			}					
 		}
 

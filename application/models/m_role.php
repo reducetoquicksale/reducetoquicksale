@@ -10,15 +10,15 @@ class M_Role extends M_Core {
 
 	function getActions() {
 		$arrAction = array();
-		if($this->getAll(DB_Table::ACTION)) {
-			foreach($this->result as $row) { $arrAction[$row["action_id"]] = $row; }
+		if($this->getAll(dbAction::TABLE)) {
+			foreach($this->result as $row) { $arrAction[$row->action_id] = $row; }
 		}
 		return $arrAction;
 	}
 
 	function getRoles() {
 		$arrRole = array();
-		if($this->getAll(DB_Table::ROLE)) {
+		if($this->getAll(dbRole::TABLE)) {
 			foreach($this->result as $row) { $arrRole[] = $row; }
 		}
 		return $arrRole;
@@ -26,8 +26,8 @@ class M_Role extends M_Core {
 
 	function getRoleActions() {
 		$arrAction = array();
-		if($this->getAll(DB_Table::ROLE_ACTION, array("role_id" => $this->role_id))) {
-			foreach($this->result as $row) { $arrAction[$row["action_id"]] = $row; }
+		if($this->getAll(dbRoleActionMapping::TABLE, array("role_id" => $this->role_id))) {
+			foreach($this->result as $row) { $arrAction[$row->action_id] = $row; }
 		}
 		return $arrAction;
 	}

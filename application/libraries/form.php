@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Form {
-	
+class Form {	
     const TEXT = "text";
 	const PASSWORD = "password";
 	const TEXTAREA = "textarea";
@@ -37,21 +36,9 @@ class Form {
 		$this->config = array_replace($this->config, $configrations);
 	}
 	
-	public function addFormField($elementObj){
-		if(isset($elementObj->type)){
-			$new_field = new stdClass();
-			$new_field->type = isset($elementObj->type) ? $elementObj->type : "";
-			$new_field->name = isset($elementObj->name) ? $elementObj->name : "";
-			$new_field->label = isset($elementObj->label) ? $elementObj->label : "";
-			$new_field->value = isset($elementObj->value) ? $elementObj->value : "";
-			$new_field->id = isset($elementObj->id) ? $elementObj->id : $elementObj->name;
-			$new_field->description = isset($elementObj->description) ? $elementObj->description : "";
-			$new_field->error = isset($elementObj->error) ? $elementObj->error : "";
-			$new_field->attributes = isset($elementObj->attributes) ? $elementObj->attributes : array();
-			$new_field->validation = isset($elementObj->validation) ? $elementObj->validation : "";
-			
-			array_push($this->formFieldMainArray, $new_field);
-		}
+	public function addFormField(FormField $elementObj){
+		$elementObj->id = empty($elementObj->id) ? $elementObj->name : $elementObj->id;
+		array_push($this->formFieldMainArray, $elementObj);
 	}
 	
 	public function groupFormFields($fields_array){
@@ -336,6 +323,22 @@ class Form {
 		}
 		if(is_array($arr1))
 			return $arr1;
+	}
+}
+
+class FormField {
+	var $type, $name, $label, $value, $id, $description, $error, $attributes, $validation;
+
+	public function __construct($name= "", $label= "", $validation = "", $type = "", $id= "", $description= "", $error= "", $attributes = array()) {
+		$this->type = $type;
+		$this->name = $name;
+		$this->label = $label;
+		$this->value = "";
+		$this->id = $id;
+		$this->description = $description;
+		$this->error = $error;
+		$this->attributes = $attributes;
+		$this->validation = $validation;
 	}
 }
 

@@ -57,8 +57,7 @@ class base_model extends CI_Model {
 	
 	public function get_dataset($dbClassName, $where="", $limit="", $start=""){
 		$this->check_dependencies($dbClassName);
-		if($where != "")
-			$this->db->where($where);
+		if($where != "") { $this->db->where($this->getWhere($where)); }
 		if(method_exists($dbClassName,'dbJoin')){
 			$joins = $dbClassName::dbJoin();
 			if(is_array($joins)){
@@ -79,17 +78,30 @@ class base_model extends CI_Model {
 		return $result->result_array();
 	}
 	
-	public function get_data_object($dbClassName, $where="", $limit="", $start=""){
+	public function get_data_object($dbClassName, $where, $limit="", $start=""){
 		$result = $this->get_dataset($dbClassName, $where, $limit, $start);
 		return $result->result();
 	}
 	
-	public function delete($dbClassName, $primary_id_name){
-		//if(intval($user_id) < 1)
-		//	return FALSE;$refl = new ReflectionClass($dbClassName);
+	public function delete($dbClassName, $primary_id_name) {
 		$this->check_dependencies($dbClassName);
 		$primary_id_value = $this->input->post($primary_id_name);
 		$this->db->where($primary_id_name, $primary_id_value);
 		return $this->db->delete($dbClassName::TABLE);
+	}
+
+	private function getWhere($where) {
+		if(is_array($where)){
+			$temp = '';
+			$flag = false;
+			foreach($where as $coloum => $value){
+				if($flag) { $this->sql_part1 .= ' AND '; }
+				$temp .= $coloum."=".$this->db->escape($value);
+				$flag = true;
+			}
+			return $temp;
+		} elseif(is_string($where) && $where != '') {
+			return $where;
+		}
 	}
 }

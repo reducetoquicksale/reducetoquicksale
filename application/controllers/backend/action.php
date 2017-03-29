@@ -16,93 +16,106 @@ class Action extends MY_Controller {
 	}
 	
 	public function add_edit($edit_call = FALSE, $id='') {
-		if($edit_call){
-			$where = dbAction::ID."='$id'";
-			$rows = $this->M_Action->count_rows($where);
-			if($rows < 1){
+		
+		$this->return_url = return_url(backendUrl(getActionUrl(UserAction::LISTACTION)));
+		$action_data = emptyDBClassArray('dbAction');
+		
+		if($edit_call) {
+			$where = array(dbAction::ID => $id);
+			$action_data = $this->M_Action->get_detail($where);
+			if($action_data == null) {
 				set_message('error', 'Action not found');
-				redirect(base_url(URL::BACKEND.'/action/manage'));
+				redirect($this->return_url);
 			}
-			$res = $this->M_Action->get_rows($where);
-			$action_data = $res[0];
+		} 
+
+		if(isset($_POST['save'])) {
+			$action_data = array_merge($action_data, $_POST);
 		}
 		
 		$this->load->library('form');
 		$this->form->config(array('template_path'=>'backend/form_template'));
 		
-		$field = new stdClass();
+		$field = new FormField();
+		$field->type = Form::TEXT;
+		$field->name = dbAction::ID;
+		$field->label = "Action ID";
+		$field->value = &$action_data[dbAction::ID];
+		$field->validation = "required";
+		$field->attributes = $edit_call ? array("readonly"=> "readonly") : array();
+		$this->form->addFormField($field);
+
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbAction::NAME;
 		$field->label = "Action Name";
-		if($edit_call){
-			$field->attributes = array("readonly"=> "readonly");
-			$field->value = $action_data[dbAction::NAME];
-		}
+		$field->value = &$action_data[dbAction::NAME];
 		$field->validation = "required";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbAction::CONTROLLER_NAME;
 		$field->label = "Controller Name";
-		if($edit_call){
-			$field->value = $action_data[dbAction::CONTROLLER_NAME];
-		}
+		$field->value = &$action_data[dbAction::CONTROLLER_NAME];
 		$field->validation = "required";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::TEXT;
 		$field->name = dbAction::FUNCTION_NAME;
 		$field->label = "Function Name";
-		if($edit_call){
-			$field->value = $action_data[dbAction::FUNCTION_NAME];
-		}
+		$field->value = &$action_data[dbAction::FUNCTION_NAME];
 		$field->validation = "required";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
-		$field->type = Form::TEXT;
-		$field->name = dbAction::MODULE;
-		$field->label = "Module";
-		if($edit_call){
-			$field->value = $action_data[dbAction::MODULE];
+		$res = $this->base_model->get_dataset('dbUI');
+		$arrUI = array("" => "Select");
+		foreach($res->result_array() as $row){
+			$arrUI[$row[dbUI::ID]] = $row[dbUI::NAME];
 		}
+
+		$field = new FormField();
+		$field->type = Form::SELECT;
+		$field->name = dbAction::UI_ID;
+		$field->label = "Select UI";
+		$field->value = $arrUI;
+		$field->attributes = array('checked' => isset($action_data[dbAction::UI_ID]) ? $action_data[dbAction::UI_ID] : "");
 		$field->validation = "required";
 		$this->form->addFormField($field);
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::SUBMIT;
 		$field->name = "save";
-		$field->value = "Add Action";
-		if($edit_call){
-			$field->value = "Update Action";
-		}
-		$field->attributes = array(
-								'class' => "btn-primary"
-							);
+		$field->value = "";
+		$field->value = $edit_call ? "Update Action" : "Add Action";
+		$field->attributes = array('class' => "btn-primary");
+		$this->form->addFormField($field);
+
+		$field = new FormField();
+		$field->type = Form::HIDDEN;
+		$field->name = "return_url";
+		$field->value = $this->return_url;
 		$this->form->addFormField($field);
 		
-		if(isset($_POST['save'])){
+		if(isset($_POST['save'])) {
 			if($this->form->validateForm()){
 				if($edit_call)
 					$action_id = $this->M_Action->update($id);
 				else
 					$action_id = $this->M_Action->add();
+				
 				if($action_id){
 					set_message('success', 'success');
-					redirect(backendUrl("action/add"));
-				}
-				else{
+					redirect($this->return_url);
+				} else {
 					set_message('message', 'message');
 				}
 			}
 		}
 		
 		$main_data['module'] = 'action';
-		$main_data['page_title'] = 'Add Action';
-		if($edit_call)
-			$main_data['page_title'] = 'Update Action';
+		$main_data['page_title'] = $edit_call ? 'Update Action' : 'Add Action';
 		$this->template->set_title($main_data['page_title']);
 		$this->template->load('common/add', $main_data);
 	}
@@ -111,17 +124,18 @@ class Action extends MY_Controller {
 		$this->load->library('form');
 		$this->load->library("datagrid");
 		$this->load->model("M_Action");
+		$this->load->library('pagination');
 		
-		$field = new stdClass();
+		$field = new FormField();
 		$field->type = Form::CHECKBOX;
 		$field->name = "action_id";
-		$field->value = array(1=>"");
+		$field->value = array("");
 		$field->attributes = array("class"=> "check_uncheck_all");
 		$checkbox = $this->form->renderField($field);
 		
 		// SELECT ALL CHECKBOX
 		$this->datagrid->addColumn($checkbox, function($row){
-				$field = new stdClass();
+				$field = new FormField();
 				$field->type = Form::CHECKBOX;
 				$field->name = "action_id[]";
 				$field->value = array($row[dbAction::ID]=>"");
@@ -130,41 +144,46 @@ class Action extends MY_Controller {
 				$label1 = $this->form->renderField($field);
 				return $label1;
 			}, Datagrid::CALLBACK);
+
+		// ACTIONS
+		$this->datagrid->addColumn("Actions", function($row) {
+				$html = "";
+				$html .= gridEdit(backendUrl(getActionUrlWithID(UserAction::EDITACTION, $row[dbAction::ID])));
+				if(validateAction(UserAction::DELACTION)) { 
+					$html .= gridDelete($row[dbAction::ID]);
+				}
+				return $html;  
+			}, Datagrid::CALLBACK);
+		
 		// DATA COLUMNS
 		$this->datagrid->addColumn("Action Name", function($row){
-				return '<a href="'.base_url().'"><span id="name'.$row[dbAction::ID].'">'.$row[dbAction::NAME].'</span></a>';
+				if(validateAction(UserAction::EDITACTION)) { 
+					return '<a href="'.backendUrl(getActionUrlWithID(UserAction::EDITACTION, $row[dbAction::ID])).'"><span id="name'.$row[dbAction::ID].'">'.$row[dbAction::NAME].'</span></a>';
+				} else {
+					return $row[dbAction::NAME];
+				}
 			}, Datagrid::CALLBACK);
 		$this->datagrid->addColumn("Controller", dbAction::CONTROLLER_NAME);
 		$this->datagrid->addColumn("Function", dbAction::FUNCTION_NAME);
-		// ACTIONS
-		$this->datagrid->addColumn("Actions", function($row){
-				$html = "";
-				$html .= ' <a class="btn btn-success btn-xs" href="'.backendUrl('action/edit/'.$row[dbAction::ID]).'" title="Edit"><i class="fa fa-pencil "></i></a>';
-				$html .= ' <button class="btn btn-danger btn-xs" title="Delete" data-toggle="modal" data-target="#deleteModal" id="'.$row[dbAction::ID].'"><span data-href="action/delete"><i class="fa fa-trash-o "></i></span></button>';
-				return $html;
-			}, Datagrid::CALLBACK);
-		
-		$total_rows = $this->M_Action->count_rows();
-		$this->load->library('pagination');
+		$this->datagrid->addColumn("UI", dbUI::NAME);		
 		
 		// NEED TO SET BASE URL AND PAGE NO URI SEGMENTS
-		$config['base_url'] = base_url($this->uri->segment(1).'/'.$this->uri->segment(2).'/'.$this->uri->segment(3));
-		$config['total_rows'] = $total_rows;
+		$config['base_url'] = backendUrl(getActionUrl(UserAction::LISTACTION));
+		$config['total_rows'] = $this->M_Action->count_rows();
 		$config['attributes'] = array('class' => 'btn btn-default');
 		$config['per_page'] = ProjectENUM::ROWS_TO_SHOW;
     	$config['use_page_numbers'] = TRUE;
 		$config['reuse_query_string'] = TRUE;
 		$config['cur_tag_open'] = '<span class="btn btn-default">';
 		$config['cur_tag_close'] = '</span>';
-		if($this->uri->segment(4)){
+		if($this->uri->segment(4)) {
 			$page = ($this->uri->segment(4)) ;
-		}
-		else{
+		} else {
 			$page = 1;
-		}
-		$action_data = $this->M_Action->get_rows('', $config['per_page'], $config['per_page']*($page-1));
-		
+		}		
 		$this->pagination->initialize($config);
+
+		$action_data = $this->M_Action->get_rows('', $config['per_page'], $config['per_page']*($page-1));
 		$this->datagrid->setData($action_data);
 
 		$data['module'] = 'action';
@@ -173,17 +192,13 @@ class Action extends MY_Controller {
 		$this->template->load("common/pagedlist", $data);
 	}
 
-	public function view() {
-		validateActionAccess($this, true);
-		
+	public function view() {		
 		$data['title'] = 'Action Detail';
 		$data['module'] = 'action';
 		$this->template->load('action/view_action', $data);
 	}
 
 	public function status($id, $status) {
-		validateActionAccess($this, true);
-		
 		$id = (int) $id;
 		$_POST[dbAction::STATUS] = (int) $status;
 		if($this->M_Action->update($id))
@@ -193,9 +208,7 @@ class Action extends MY_Controller {
 		redirect(backendUrl("action/manage"));
 	}
 
-	public function delete($id) {
-		validateActionAccess($this, true);
-		
+	public function delete($id) {		
 		$id = (int) $id;
 		if($this->M_Action->delete($id))
 			set_message('success', 'success');
