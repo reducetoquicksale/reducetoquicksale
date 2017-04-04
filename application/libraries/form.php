@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Form {	
-    const TEXT = "text";
+class Form {
+	const TEXT = "text";
 	const PASSWORD = "password";
 	const TEXTAREA = "textarea";
 	const HIDDEN = "hidden";
@@ -18,17 +18,17 @@ class Form {
 	private $fieldGroup = array();
 	private $labelVar = "";
 	private $fieldVar = "";
-	private $config; 
-
+	private $config;
+	
 	function __construct(){
 		$this->config = array(
-						'auto_validation' => TRUE,
-						'template_path' => '',
-						'form_action' => '',
-						'form_method' => 'POST',
-						'form_start_file_name' => 'form_start',
-						'form_field_file_name' => 'form_fields',
-						'form_end_file_name' => 'form_end'
+				'auto_validation' => TRUE,
+				'template_path' => '',
+				'form_action' => '',
+				'form_method' => 'POST',
+				'form_start_file_name' => 'form_start',
+				'form_field_file_name' => 'form_fields',
+				'form_end_file_name' => 'form_end'
 		);
 	}
 	
@@ -67,8 +67,8 @@ class Form {
 				}
 				if(isset($multipart))
 					$formHtml .= form_open_multipart($this->config['form_action']);
-				else
-					$formHtml .= form_open($this->config['form_action']);
+					else
+						$formHtml .= form_open($this->config['form_action']);
 			}
 			foreach($this->formFieldMainArray as $key => $value){
 				if(array_key_exists($key, $this->formFieldMainArray))
@@ -95,18 +95,18 @@ class Form {
 		$this->labelVar = array();
 		if($data['field_object']->label != ""){
 			$this->labelVar = array(
-				'label' => $data['field_object']->label, 
-				'id' => $data['field_object']->id,
-				'attributes' => array(
-					'class' => $data['field_object']->name."_label"
-				)
+					'label' => $data['field_object']->label,
+					'id' => $data['field_object']->id,
+					'attributes' => array(
+							'class' => $data['field_object']->name."_label"
+					)
 			);
 		}
 		
 		$this->fieldVar = array(
 				'name' => $data['field_object']->name,
 				//'field_index' => $index
-			);
+		);
 		
 		$formHtml = "";
 		$CI =& get_instance();
@@ -118,8 +118,8 @@ class Form {
 			$formHtml .= '<div class="'.$this->fieldVar['name'].'_wrapper field_wrapper">';
 			if(!empty($this->labelVar))
 				$formHtml .= $this->label();
-			$formHtml .= $this->field();
-			$formHtml .= '</div>';
+				$formHtml .= $this->field();
+				$formHtml .= '</div>';
 		}
 		return $formHtml;
 	}
@@ -137,110 +137,108 @@ class Form {
 		$attributes = $value->attributes;
 		if(is_array($custom_attributes))
 			$attributes = $this->array_add($attributes, $custom_attributes);
-		$attributes['id'] = $value->id;
-		//if(!empty($value->attributes))
-			//$field['attributes'] = $value->attributes;
+			$attributes['id'] = $value->id;
 			
-		if(set_value($value->name) != "")
-			$set_value = set_value($value->name);
-		else
-			$set_value = $value->value;
-		
-		$formHtml = "";
-		switch($value->type){
-			case Form::TEXT:
-				$formHtml = form_input($value->name, $set_value, $attributes);
-				break;
-			case Form::PASSWORD:
-				$formHtml = form_password($value->name, '', $attributes);
-				break;
-			case Form::TEXTAREA:
-				$formHtml = form_textarea($value->name, $set_value, $attributes);
-				break;
-			case Form::HIDDEN:
-				$formHtml = form_hidden($value->name, $value->value);
-				break;
-			case Form::FILE:
-				$formHtml = form_upload($value->name, $value->value, $attributes);
-				break;
-			case Form::CHECKBOX:
-				if(set_value($value->name) != "" && !is_array($set_value))
-					$dummy_checked = array($set_value);
-				else if(set_value($value->name) != "" && is_array($set_value))
-					$dummy_checked = $set_value;
-				else if(isset($attributes['checked']) && is_array($attributes['checked']))
-					$dummy_checked = $attributes['checked'];
-				unset($attributes['checked']);
-				
-				if(!is_array($value->value))
-					$value->value = array($value->value=>"");
+			if(set_value($value->name) != "")
+				$set_value = set_value($value->name);
+				else
+					$set_value = $value->value;
 					
-				foreach($value->value as $val=>$lab){
-					$checked = FALSE;
-					if(isset($dummy_checked) && in_array($val, $dummy_checked))
-						$checked = TRUE;
-					$attributes['id'] = $value->name.'_'.$val;
-					if($lab != "")
-						$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
-					$formHtml .= form_checkbox($value->name, $val, $checked, $attributes);
-					if($lab != "")
-						$formHtml .= $lab.'</label>';
-				}
-				break;
-			case Form::RADIO:
-				if(!is_array($value->value))
-					$value->value = array($value->value=>"");
-					
-				foreach($value->value as $val=>$lab){
-					$checked = FALSE;
-					if(set_value($value->name) != "" && $set_value == $val)
-						$checked = TRUE;
-					else if(isset($attributes['checked']) && $attributes['checked'] == $val){
-						$checked = TRUE;
-						unset($attributes['checked']);
+					$formHtml = "";
+					switch($value->type){
+						case Form::TEXT:
+							$formHtml = form_input($value->name, $set_value, $attributes);
+							break;
+						case Form::PASSWORD:
+							$formHtml = form_password($value->name, '', $attributes);
+							break;
+						case Form::TEXTAREA:
+							$formHtml = form_textarea($value->name, $set_value, $attributes);
+							break;
+						case Form::HIDDEN:
+							$formHtml = form_hidden($value->name, $value->value);
+							break;
+						case Form::FILE:
+							$formHtml = form_upload($value->name, $value->value, $attributes);
+							break;
+						case Form::CHECKBOX:
+							if(set_value($value->name) != "" && !is_array($set_value))
+								$dummy_checked = array($set_value);
+								else if(set_value($value->name) != "" && is_array($set_value))
+									$dummy_checked = $set_value;
+									else if(isset($attributes['checked']) && is_array($attributes['checked']))
+										$dummy_checked = $attributes['checked'];
+										unset($attributes['checked']);
+										
+										if(!is_array($value->value))
+											$value->value = array($value->value=>"");
+											
+											foreach($value->value as $val=>$lab){
+												$checked = FALSE;
+												if(isset($dummy_checked) && in_array($val, $dummy_checked))
+													$checked = TRUE;
+													$attributes['id'] = $value->name.'_'.$val;
+													if($lab != "")
+														$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
+														$formHtml .= form_checkbox($value->name, $val, $checked, $attributes);
+														if($lab != "")
+															$formHtml .= $lab.'</label>';
+											}
+											break;
+						case Form::RADIO:
+							if(!is_array($value->value))
+								$value->value = array($value->value=>"");
+								
+								foreach($value->value as $val=>$lab){
+									$checked = FALSE;
+									if(set_value($value->name) != "" && $set_value == $val)
+										$checked = TRUE;
+										else if(isset($attributes['checked']) && $attributes['checked'] == $val){
+											$checked = TRUE;
+											unset($attributes['checked']);
+										}
+										$attributes['id'] = $value->name.'_'.$val;
+										if($lab != "")
+											$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
+											$formHtml .= form_radio($value->name, $val, $checked, $attributes);
+											if($lab != "")
+												$formHtml .= $lab.'</label>';
+								}
+								break;
+						case Form::SELECT:
+							$checked = FALSE;
+							if(set_value($value->name) != "")
+								$checked = $set_value;
+								else if(isset($attributes['checked']))
+									$checked = $attributes['checked'];
+									unset($attributes['checked']);
+									$formHtml = form_dropdown($value->name, $value->value, $checked, $attributes);
+									break;
+						case Form::MULTISELECT:
+							$checked = FALSE;
+							if(set_value($value->name) != "" && !is_array($set_value))
+								$checked = array($set_value);
+								else if(set_value($value->name) != "" && is_array($set_value))
+									$checked = $set_value;
+									else if(isset($attributes['checked']) && is_array($attributes['checked']))
+										$checked = $attributes['checked'];
+										unset($attributes['checked']);
+										//print_r($checked);
+										$formHtml = form_multiselect($value->name, $value->value, $checked, $attributes);
+										break;
+						case Form::SUBMIT:
+							$formHtml = form_submit($value->name, $value->value, $attributes);
+							break;
+						case Form::BUTTON:
+							$formHtml = form_reset($value->name, $value->value, $attributes);
+							break;
+						case Form::RESET:
+							$formHtml = form_button($value->name, $value->value, $attributes);
+							break;
 					}
-					$attributes['id'] = $value->name.'_'.$val;
-					if($lab != "")
-						$formHtml .= '<label for="'.$value->name.'_'.$val.'">';
-					$formHtml .= form_radio($value->name, $val, $checked, $attributes);
-					if($lab != "")
-						$formHtml .= $lab.'</label>';
-				}
-				break;
-			case Form::SELECT:
-				$checked = FALSE;
-				if(set_value($value->name) != "")
-					$checked = $set_value;
-				else if(isset($attributes['checked']))
-					$checked = $attributes['checked'];
-				unset($attributes['checked']);
-				$formHtml = form_dropdown($value->name, $value->value, $checked, $attributes);
-				break;
-			case Form::MULTISELECT:
-				$checked = FALSE;
-				if(set_value($value->name) != "" && !is_array($set_value))
-					$checked = array($set_value);
-				else if(set_value($value->name) != "" && is_array($set_value))
-					$checked = $set_value;
-				else if(isset($attributes['checked']) && is_array($attributes['checked']))
-					$checked = $attributes['checked'];
-				unset($attributes['checked']);
-				//print_r($checked);
-				$formHtml = form_multiselect($value->name, $value->value, $checked, $attributes);
-				break;
-			case Form::SUBMIT:
-				$formHtml = form_submit($value->name, $value->value, $attributes);
-				break;
-			case Form::BUTTON:
-				$formHtml = form_reset($value->name, $value->value, $attributes);
-				break;
-			case Form::RESET:
-				$formHtml = form_button($value->name, $value->value, $attributes);
-				break;
-		}
-		if(isset($index))
-			unset($this->formFieldMainArray[$index]);
-		return $formHtml;
+					if(isset($index))
+						unset($this->formFieldMainArray[$index]);
+						return $formHtml;
 	}
 	
 	public function renderLabel($field_name, $attributes = ""){
@@ -276,18 +274,18 @@ class Form {
 		if(!isset($groups))
 			$groups = array($this->fieldVar['name']);
 			
-		foreach($groups as $field_name){
-			foreach($this->formFieldMainArray as $index => $value){
-				if($value->name == $field_name)
-					break;
+			foreach($groups as $field_name){
+				foreach($this->formFieldMainArray as $index => $value){
+					if($value->name == $field_name)
+						break;
+				}
+				
+				$new_attributes = $this->array_add($value->attributes, $attributes);
+				$this->formFieldMainArray[$index]->attributes = $new_attributes;
+				$fieldHtml .= $this->renderField($field_name);
 			}
 			
-			$new_attributes = $this->array_add($value->attributes, $attributes);
-			$this->formFieldMainArray[$index]->attributes = $new_attributes;
-			$fieldHtml .= $this->renderField($field_name);
-		}
-		
-		return $fieldHtml;
+			return $fieldHtml;
 	}
 	
 	public function validateForm(){
@@ -328,18 +326,16 @@ class Form {
 
 class FormField {
 	var $type, $name, $label, $value, $id, $description, $error, $attributes, $validation;
-
-	public function __construct($name= "", $label= "", $validation = "", $type = "", $id= "", $description= "", $error= "", $attributes = array()) {
+	
+	public function __construct($name= "", $label= "", $type = Form::TEXT, $validation="") {
 		$this->type = $type;
 		$this->name = $name;
 		$this->label = $label;
 		$this->value = "";
-		$this->id = $id;
-		$this->description = $description;
-		$this->error = $error;
-		$this->attributes = $attributes;
+		$this->id = '';
+		$this->description = '';
+		$this->error = '';
+		$this->attributes = array();
 		$this->validation = $validation;
 	}
 }
-
-?>

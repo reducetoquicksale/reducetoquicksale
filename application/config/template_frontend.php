@@ -20,7 +20,7 @@ $config['DEFAULT_HEAD_LINK'] = array(
 				);
 $config['DEFAULT_CSS_FILES'] = array( 
 					base_url("assets/css/bootstrap.css"), 
-					base_url("assets/font-awesome/css/font-awesome.css"), 
+					base_url("assets/css/font-awesome.css"), 
 					base_url("assets/css/style.css")
 );
 $config['DEFAULT_SCRIPT_FILES'] = array(
@@ -56,8 +56,9 @@ $config['MAIN_SCRIPT_FILES'] = array(
 );
 $config['MAIN_STRUCTURE'] = array(
 		'template/html_head',
-		'common/homepage_banner',
 		'template/main_content_area',
+		'template/inner_page_heading',
+		'template/inner_page_breadcrumb',
 		'[main]',
 		'template/html_foot'
 	);

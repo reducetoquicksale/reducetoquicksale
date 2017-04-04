@@ -6,10 +6,16 @@ class m_user extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function authentication(){
+	public function authentication($a=""){
 		$loginid = $this->input->post(dbUser::LOGIN_ID);
+		if($loginid != ''){
+			$this->db->where(dbUser::LOGIN_ID, $loginid);
+		}
+		else{
+			$loginid = $this->input->post(dbUser::EMAIL);
+			$this->db->where(dbUser::EMAIL, $loginid);
+		}
 		$password = sha1($this->input->post(dbUser::PASSWORD));
-		$this->db->where(dbUser::LOGIN_ID, $loginid);
 		$this->db->where(dbUser::PASSWORD, $password);
 		$this->db->where(dbUser::STATUS, '1');
 		$fields = dbUser::ID.', '.dbUser::LOGIN_ID.', '.dbUser::EMAIL.', '.dbUser::REFERENCE_TYPE.', '.dbUser::ROLE_ID.', '.dbUser::STATUS.', '.dbUser::IS_SUPER;
